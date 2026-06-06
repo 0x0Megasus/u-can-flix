@@ -7,7 +7,7 @@ export default function Footer() {
   const [contactOpen, setContactOpen] = useState(false)
 
   return (
-    <footer className="bg-[#141414] border-t border-[#222] py-8 px-4 sm:px-10 mt-12">
+    <footer className="bg-[#141414] border-t border-[#222] py-8 px-4 sm:px-10 lg:px-[200px] mt-12">
       <div className="max-w-[1440px] mx-auto text-center">
         <div className="text-[#e50914] text-xl font-black tracking-wider mb-4">U CAN FLIX</div>
 

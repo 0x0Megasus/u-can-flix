@@ -83,7 +83,7 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
 
   return (
     <section className="mb-8">
-      <div className="flex items-center justify-between mb-4 px-4 sm:px-10">
+      <div className="flex items-center justify-between mb-4 px-4 sm:px-10 lg:px-[200px]">
         <h2 className="text-xl font-bold text-white">{title}</h2>
         {showArrows && (
           <div className="flex gap-2">
@@ -101,9 +101,9 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
         )}
       </div>
       {displayLoading ? (
-        <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
+        <div className="flex gap-3 px-4 sm:px-10 lg:px-[200px] overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-[150px] sm:w-[175px] md:w-[200px] lg:w-[220px]">
+            <div key={i} className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px]">
               <div className="aspect-[2/3] rounded bg-[#2a2a2a] animate-shimmer mb-2" />
               <div className="h-3 rounded bg-[#2a2a2a] animate-shimmer mb-1.5" />
               <div className="h-3 w-3/5 rounded bg-[#2a2a2a] animate-shimmer" />
@@ -111,9 +111,9 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
           ))}
         </div>
       ) : displayItems.length === 0 ? (
-        <p className="px-4 sm:px-10 text-[#808080]">No content available</p>
+        <p className="px-4 sm:px-10 lg:px-[200px] text-[#808080]">No content available</p>
       ) : (
-        <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+        <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 lg:px-[200px] overflow-x-auto scrollbar-hide pb-2">
           {displayItems.map((item, i) => {
             const itemType = detectType(item)
             const isShow = itemType === 'TV Show' || itemType === 'Anime'

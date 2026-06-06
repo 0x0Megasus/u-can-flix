@@ -13,7 +13,7 @@ export const metadata = {
 
 export default function DMCAPage() {
   return (
-    <section className="pt-[100px] px-4 sm:px-10 pb-12 max-w-3xl mx-auto">
+    <section className="pt-[100px] px-4 sm:px-10 lg:px-[200px] pb-12 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-white mb-6">DMCA Takedown Request Requirements</h1>
 
       <p className="text-[#b3b3b3] mb-4 leading-relaxed">

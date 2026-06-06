@@ -21,7 +21,7 @@ function ItemsRow({ items, onWatch }) {
 
   return (
     <div className="mb-2">
-      <div className="flex items-center justify-end gap-2 px-4 sm:px-10 h-7 mb-3">
+      <div className="flex items-center justify-end gap-2 px-4 sm:px-10 lg:px-[200px] h-7 mb-3">
         {showArrows && (
           <div className="flex gap-2">
             <button onClick={() => scroll('left')} aria-label="Scroll left"
@@ -37,7 +37,7 @@ function ItemsRow({ items, onWatch }) {
           </div>
         )}
       </div>
-      <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+      <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 lg:px-[200px] overflow-x-auto scrollbar-hide pb-2">
         {items.map((g, i) => {
           const item = g.representative || g
           const type = detectType(item)
@@ -179,12 +179,12 @@ export default function CategoryPage({ filter, label }) {
         />
 
         <div className="mb-8">
-          <div className="flex items-center justify-between px-4 sm:px-10 mb-4">
+          <div className="flex items-center justify-between px-4 sm:px-10 lg:px-[200px] mb-4">
             <h2 className="text-xl font-bold text-white">More {catLabel}</h2>
             <span className="text-sm text-[#808080]">{displayItems.length} items</span>
           </div>
           {visibleItems.length === 0 ? (
-            <p className="px-4 sm:px-10 text-[#808080]">No {catLabel.toLowerCase()} available</p>
+            <p className="px-4 sm:px-10 lg:px-[200px] text-[#808080]">No {catLabel.toLowerCase()} available</p>
           ) : (
             itemRows.map((row, i) => <ItemsRow key={i} items={row} onWatch={openPlayer} />)
           )}
@@ -210,7 +210,7 @@ export default function CategoryPage({ filter, label }) {
             </div>
           )}
 
-          <div className="px-4 sm:px-10 pb-12 mt-8">
+          <div className="px-4 sm:px-10 lg:px-[200px] pb-12 mt-8">
             <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
               <input
                 className="flex-1 px-4 py-3.5 rounded bg-[#333] text-white text-base border-none outline-none focus:ring-2 focus:ring-[#e50914] placeholder-[#808080]"

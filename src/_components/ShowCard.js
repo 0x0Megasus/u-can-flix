@@ -95,7 +95,7 @@ export default function ShowCard({ group, onWatch }) {
         role="button"
         tabIndex={0}
         aria-label={`Browse episodes for ${title}`}
-        className="flex-shrink-0 w-[150px] sm:w-[175px] md:w-[200px] lg:w-[220px] cursor-pointer "
+        className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px] cursor-pointer "
         onClick={handleClick}
         onKeyDown={handleKeyDown}
       >
@@ -106,7 +106,7 @@ export default function ShowCard({ group, onWatch }) {
               src={image}
               alt={title}
               fill
-              sizes="(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 175px, 150px"
+              sizes="(min-width: 1024px) 280px, (min-width: 768px) 250px, (min-width: 640px) 200px, 160px"
             />
           ) : (
             <div className="w-full h-full bg-[#1e1e1e]" />

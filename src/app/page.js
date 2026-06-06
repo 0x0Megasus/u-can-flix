@@ -89,7 +89,7 @@ export default function HomePage() {
         <TopRatedRow title="Anime" filter="anime" onWatch={openPlayer} limit={10} />
       </section>
 
-      <div className="px-4 sm:px-10 pb-12">
+      <div className="px-4 sm:px-10 lg:px-[200px] pb-12">
         <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
           <input
             className="flex-1 px-4 py-3.5 rounded bg-[#333] text-white text-base border-none outline-none focus:ring-2 focus:ring-[#e50914] placeholder-[#808080]"

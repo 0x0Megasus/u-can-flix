@@ -31,7 +31,7 @@ export default function Navbar() {
       scrolled ? 'shadow-lg shadow-black/20' : ''
     }`}>
       <div className="max-w-[1440px] mx-auto">
-        <div className="flex items-center justify-between px-4 sm:px-10 h-[60px] gap-3">
+        <div className="flex items-center justify-between px-4 sm:px-10 lg:px-[200px] h-[60px] gap-3">
           <button
             type="button"
             className="text-[#e50914] text-xl sm:text-2xl font-black tracking-wider cursor-pointer select-none bg-transparent border-none p-0 whitespace-nowrap shrink-0"
@@ -71,7 +71,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="md:hidden overflow-x-auto pb-3 px-4 sm:px-10" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="md:hidden overflow-x-auto pb-3 px-4 sm:px-10 lg:px-[200px]" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <div className="flex gap-2">
             {NAVS.map(({ path, label }) => (
               <button
