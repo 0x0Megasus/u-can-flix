@@ -59,7 +59,7 @@ export default function Navbar() {
           <div className="flex items-center shrink-0">
             {!isSearch && (
               <button onClick={handleSearchClick} aria-label="Search"
-                className="flex items-center gap-2 text-[#b3b3b3] hover:text-white hover:border-white transition-all duration-200 bg-transparent border border-white/20 cursor-pointer text-sm rounded-full px-3 sm:px-5 py-2"
+                className="flex items-center gap-2 text-[#b3b3b3] hover:text-white hover:border-white transition-all duration-200 bg-transparent border border-white/20 cursor-pointer text-sm rounded-full px-3 sm:px-5 py-2 min-w-[100px] sm:min-w-0 justify-center"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
