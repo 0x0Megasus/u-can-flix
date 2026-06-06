@@ -35,13 +35,4 @@ src/
 └── _lib/                 # Utilities & helpers
 ```
 
-## Quick start
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
 ---
