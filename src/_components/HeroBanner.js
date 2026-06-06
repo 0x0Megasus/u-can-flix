@@ -89,7 +89,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
         >
           {type}
         </span>
-        <h1 className="text-3xl md:text-5xl font-bold mb-3 text-white drop-shadow-lg">{title}</h1>
+        <h1 className="text-3xl md:text-5xl font-bold mb-[60px] text-white drop-shadow-lg">{title}</h1>
 
         <button
           onClick={isShowType ? handleShowSeasons : () => onWatch(item)}

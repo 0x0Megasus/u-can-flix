@@ -34,5 +34,3 @@ src/
 ├── _hooks/               # Custom hooks
 └── _lib/                 # Utilities & helpers
 ```
-
----
