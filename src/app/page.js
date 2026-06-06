@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { usePlayer } from '@/_components/PlayerProvider'
 import HeroBanner from '@/_components/HeroBanner'
 import TopRatedRow from '@/_components/TopRatedRow'
@@ -48,6 +49,39 @@ export default function HomePage() {
 
   return (
     <main>
+      <div className="sr-only">
+        <h1>Watch Free Movies, TV Shows & Anime Online</h1>
+        <section>
+          <h2>Why UCanFlix?</h2>
+          <p>
+            UCanFlix is a free streaming site no sign up required, offering thousands of
+            movies, TV shows, and anime in HD quality. You can watch free movies online
+            without signing up or creating an account. Unlike other platforms, we have
+            zero ads, no limits, and no hidden fees — just unlimited access to premium
+            entertainment across every genre imaginable.
+          </p>
+        </section>
+        <section>
+          <h2>Top Categories</h2>
+          <p>
+            Browse our library of <Link href="/movies">free movies online</Link> across
+            action, drama, comedy, and crime. Catch up on popular{' '}
+            <Link href="/tv-shows">free TV shows online</Link> including the latest
+            series. Stream full seasons of the best <Link href="/anime">anime free HD</Link>{' '}
+            with English subtitles and dubbing. Use our{' '}
+            <Link href="/search">advanced search</Link> to discover new releases.
+          </p>
+        </section>
+        <section>
+          <h2>No Registration Required</h2>
+          <p>
+            Stream movies free no registration needed — just click and watch instantly.
+            As the best free anime streaming site 2026, we deliver instant playback in HD
+            quality. Enjoy free HD movie streaming no account necessary on any device.
+            UCanFlix is the best free streaming site like Netflix, but without the cost.
+          </p>
+        </section>
+      </div>
       <HeroBanner item={heroItem} onWatch={openPlayer} loading={heroLoading} />
       <section className="pt-12">
         <TopRatedRow title="Top Movies" filter="movies" onWatch={openPlayer} limit={10} />

@@ -3,30 +3,31 @@ import AppShell from "@/_components/AppShell";
 
 export async function generateMetadata() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ucanflix.com';
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'U Can Flix';
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'UCanFlix';
   
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${siteName} - Stream Movies, TV Shows & Anime Free Online`,
+      default: 'Watch Free Movies, TV Shows & Anime Online HD | UCanFlix',
       template: `%s - ${siteName}`,
     },
-    description: `Watch free movies, TV shows, and anime online in HD streaming at ${siteName}. Enjoy the latest action, crime, and drama series without registration. Your destination for top-rated entertainment available 24/7.`,
+    description: 'Stream free movies, TV shows & anime in HD on UCanFlix. No sign up, no ads, no limits. Watch action, drama, crime & more 24/7.',
     alternates: {
       canonical: '/',
     },
     openGraph: {
-      title: `${siteName} - Stream Movies, TV Shows & Anime Free Online`,
-      description: `Watch free movies, TV shows, and anime online in HD streaming at ${siteName}.`,
-      url: '/',
+      title: 'Watch Free Movies, TV Shows & Anime Online HD | UCanFlix',
+      description: 'Stream free movies, TV shows & anime in HD on UCanFlix. No sign up, no ads, no limits. Watch action, drama, crime & more 24/7.',
+      url: siteUrl,
       siteName,
+      locale: 'en_US',
       images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${siteName} - Stream Movies, TV Shows & Anime Free Online`,
-      description: `Watch free movies, TV shows, and anime online in HD streaming at ${siteName}.`,
+      title: 'Watch Free Movies, TV Shows & Anime Online HD | UCanFlix',
+      description: 'Stream free movies, TV shows & anime in HD on UCanFlix. No sign up, no ads, no limits. Watch action, drama, crime & more 24/7.',
       images: ['/og-image.jpg'],
     }
   };
@@ -34,7 +35,7 @@ export async function generateMetadata() {
 
 export default function RootLayout({ children }) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ucanflix.com';
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'U Can Flix';
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'UCanFlix';
 
   return (
     <html lang="en" className="h-full">
@@ -54,7 +55,7 @@ export default function RootLayout({ children }) {
               "@type": "WebSite",
               name: siteName,
               url: siteUrl,
-              description: `Watch free movies, TV shows, and anime online in HD streaming at ${siteName}.`,
+              description: 'Stream free movies, TV shows & anime in HD on UCanFlix. No sign up, no ads, no limits.',
               potentialAction: {
                 "@type": "SearchAction",
                 target: `${siteUrl}/search?q={search_term_string}`,
