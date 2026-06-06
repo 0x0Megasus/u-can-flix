@@ -7,6 +7,7 @@ import ContentCard from '@/_components/ContentCard'
 import ShowCard from '@/_components/ShowCard'
 import TopRatedRow from '@/_components/TopRatedRow'
 import LoadingSkeleton from '@/_components/LoadingSkeleton'
+import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
 import { fetchBestContent, fetchContent, fetchPosts } from '@/_lib/api'
 import { groupByShow, pickBiggestSeason, getCategoryIds, detectType, showKey } from '@/_lib/utils'
 
@@ -85,7 +86,7 @@ export default function CategoryPage({ filter, label }) {
       <main className="pt-[100px] md:pt-[68px]">
         <HeroBanner loading={true} onWatch={openPlayer} />
         <LoadingSkeleton title={`Top ${catLabel}`} count={10} grid={true} />
-        <LoadingSkeleton title={`More ${catLabel}`} count={10} grid={true} />
+        <LoadingSkeleton title={`More ${catLabel}`} count={10} grid={false} />
       </main>
     )
   }
@@ -121,6 +122,8 @@ export default function CategoryPage({ filter, label }) {
     navigate.push(`/search?type=${filter}`)
   }
 
+  const { containerRef, showArrows, scroll } = useHorizontalScroll([visibleItems])
+
   return (
     <main className="pt-[100px] md:pt-[68px]">
       {catHero && <HeroBanner item={catHero} onWatch={openPlayer} />}
@@ -136,24 +139,39 @@ export default function CategoryPage({ filter, label }) {
         <div className="mb-8">
           <div className="flex items-center justify-between px-4 sm:px-10 mb-4">
             <h2 className="text-xl font-bold text-white">More {catLabel}</h2>
-            <span className="text-sm text-[#808080]">{displayItems.length} items</span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-[#808080]">{displayItems.length} items</span>
+              {showArrows && (
+                <div className="flex gap-2">
+                  <button onClick={() => scroll('left')} aria-label="Scroll left"
+                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6" /></svg>
+                  </button>
+                  <button onClick={() => scroll('right')} aria-label="Scroll right"
+                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9,18 15,12 9,6" /></svg>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 px-4 sm:px-10">
-            {visibleItems.length === 0 ? (
-              <p className="col-span-full text-[#808080]">No {catLabel.toLowerCase()} available</p>
-            ) : (
-              visibleItems.map((g, i) => {
+          {visibleItems.length === 0 ? (
+            <p className="px-4 sm:px-10 text-[#808080]">No {catLabel.toLowerCase()} available</p>
+          ) : (
+            <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+              {visibleItems.map((g, i) => {
                 const item = g.representative || g
                 const type = detectType(item)
                 const key = item.id ? `item-${item.id}` : `group-${g.displayName || i}`
-
                 if (type === 'TV Show' || type === 'Anime') {
                   return <ShowCard key={key} group={g} onWatch={openPlayer} />
                 }
                 return <ContentCard key={key} item={item} onWatch={openPlayer} />
-              })
-            )}
-          </div>
+              })}
+            </div>
+          )}
 
           {(hasMore || canFetchMore) && (
             <div className="text-center mt-8">

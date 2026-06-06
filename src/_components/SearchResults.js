@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { useDebounce } from '@/_hooks/useDebounce'
 import { detectType, groupByShow, pickBiggestSeason } from '@/_lib/utils'
 import { fetchPosts, searchPosts } from '@/_lib/api'
 import ShowCard from './ShowCard'
@@ -49,8 +48,6 @@ function SearchContent({ onWatch }) {
 
   const activeType = SEARCH_TYPES.find(t => t.key === typeParam) || SEARCH_TYPES[0]
   const catFilter = activeType?.catFilter || ''
-  const { debounced: debouncedQuery, flush: flushDebounce } = useDebounce(query, 500)
-
   useEffect(() => { setResults(null) }, [query])
 
   const setSearch = (newType, newQuery) => {
@@ -68,18 +65,8 @@ function SearchContent({ onWatch }) {
 
   const handleSearchBtn = useCallback(() => {
     if (!query.trim()) return
-    flushDebounce()
     doSearch(query)
-  }, [query, doSearch, flushDebounce])
-
-  useEffect(() => {
-    if (!debouncedQuery.trim()) {
-      setResults(null)
-      setLoading(false)
-      return
-    }
-    doSearch(debouncedQuery)
-  }, [debouncedQuery, activeType, doSearch])
+  }, [query, doSearch])
 
   const grouped = useMemo(() => {
     if (!results || results.length === 0) return null
