@@ -85,7 +85,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
       <div className="hero-gradient absolute inset-0" />
       <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10 max-w-[1440px] mx-auto">
         <span className="inline-block px-3 py-1 rounded text-xs font-bold uppercase tracking-wider mb-3"
-          style={{ background: type === 'Movie' ? '#e50914' : type === 'TV Show' ? '#2196F3' : type === 'Anime' ? '#9C27B0' : '#e50914' }}
+          style={{ background: type === 'Movie' ? '#e50914' : type === 'TV Show' ? '#2c3e50' : type === 'Anime' ? '#9C27B0' : '#e50914' }}
         >
           {type}
         </span>

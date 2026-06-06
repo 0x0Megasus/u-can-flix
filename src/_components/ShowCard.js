@@ -127,7 +127,7 @@ export default function ShowCard({ group, onWatch }) {
           <h3 className="text-sm font-semibold text-white truncate mb-1">{title}</h3>
           <div className="flex flex-wrap gap-1">
             <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase"
-              style={{ background: type === 'Anime' ? '#9C27B0' : '#2196F3', color: '#fff' }}
+              style={{ background: type === 'Anime' ? '#9C27B0' : '#2c3e50', color: '#fff' }}
             >
               {type === 'Anime Movie' ? 'Anime' : type}
             </span>
