@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { detectType, groupByShow, pickBiggestSeason } from '@/_lib/utils'
 import { fetchPosts, searchPosts } from '@/_lib/api'
@@ -43,30 +43,42 @@ function SearchContent({ onWatch }) {
   const query = searchParams.get('q') || ''
   const typeParam = searchParams.get('type') || ''
 
+  const [input, setInput] = useState(query)
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(false)
+  const searchingRef = useRef(false)
 
   const activeType = SEARCH_TYPES.find(t => t.key === typeParam) || SEARCH_TYPES[0]
   const catFilter = activeType?.catFilter || ''
-  useEffect(() => { setResults(null) }, [query])
 
-  const setSearch = (newType, newQuery) => {
-    const params = new URLSearchParams()
-    if (newQuery !== undefined) params.set('q', newQuery)
-    else if (query) params.set('q', query)
-    if (newType !== undefined) { if (newType) params.set('type', newType) }
-    else if (typeParam) params.set('type', typeParam)
-    router.push(`/search?${params.toString()}`, { scroll: false })
-  }
+  // Initial search from URL on mount
+  useEffect(() => {
+    if (query.trim()) {
+      doSearch(query)
+    }
+  }, [])
+
+  // Sync input & clear results on external URL changes (back/forward), not our own pushes
+  useEffect(() => {
+    if (searchingRef.current) { searchingRef.current = false; return }
+    setInput(query)
+    setResults(null)
+    setLoading(false)
+  }, [query])
 
   const doSearch = useCallback((searchQuery) => {
     runSearch({ catFilter, searchQuery, activeType, onResult: setResults, onLoading: setLoading })
   }, [catFilter, activeType])
 
   const handleSearchBtn = useCallback(() => {
-    if (!query.trim()) return
-    doSearch(query)
-  }, [query, doSearch])
+    if (!input.trim()) return
+    const params = new URLSearchParams()
+    params.set('q', input.trim())
+    if (typeParam) params.set('type', typeParam)
+    searchingRef.current = true
+    router.push(`/search?${params.toString()}`, { scroll: false })
+    doSearch(input.trim())
+  }, [input, typeParam, router, doSearch])
 
   const grouped = useMemo(() => {
     if (!results || results.length === 0) return null
@@ -104,7 +116,7 @@ function SearchContent({ onWatch }) {
           {SEARCH_TYPES.map(t => (
             <button
               key={t.key}
-              onClick={() => { if (activeType?.key !== t.key) setSearch(t.key, query) }}
+              onClick={() => { if (activeType?.key !== t.key) { setResults(null); setLoading(true); const params = new URLSearchParams(); params.set('q', query); params.set('type', t.key); searchingRef.current = true; router.push(`/search?${params.toString()}`, { scroll: false }); doSearch(query) } }}
               className={`px-4 py-2 rounded text-sm font-bold transition-colors border-none cursor-pointer ${
                 activeType?.key === t.key ? 'bg-[#e50914] text-white' : 'bg-[#333] text-[#b3b3b3] hover:bg-[#444]'
               }`}
@@ -128,12 +140,12 @@ function SearchContent({ onWatch }) {
             className="flex-1 px-4 py-3.5 rounded bg-[#333] text-white text-base border-none outline-none focus:ring-2 focus:ring-[#e50914] placeholder-[#808080]"
             type="text"
             placeholder={activeType.key === '' ? 'Search movies, TV shows & anime...' : `Search ${activeType.label}...`}
-            value={query}
-            onChange={e => setSearch(activeType.key, e.target.value)}
+            value={input}
+            onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearchBtn()}
-            autoFocus={!query.trim()}
+            autoFocus={!input.trim()}
           />
-          <button onClick={handleSearchBtn} disabled={!query.trim()} aria-label="Search"
+          <button onClick={handleSearchBtn} disabled={!input.trim()} aria-label="Search"
             className="px-5 py-3.5 rounded bg-[#e50914] text-white disabled:opacity-50 border-none cursor-pointer disabled:cursor-not-allowed flex items-center"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
