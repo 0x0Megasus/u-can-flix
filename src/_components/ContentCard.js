@@ -21,7 +21,7 @@ export default function ContentCard({ item, onWatch }) {
       role="button"
       tabIndex={0}
       aria-label={`Play ${title}`}
-      className="flex-shrink-0 w-[150px] sm:w-[175px] md:w-[200px] lg:w-[220px] cursor-pointer transition-transform duration-300 hover:scale-105"
+      className="flex-shrink-0 w-[150px] sm:w-[175px] md:w-[200px] lg:w-[220px] cursor-pointer "
       onClick={() => onWatch(item)}
       onKeyDown={handleKeyDown}
     >

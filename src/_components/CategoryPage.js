@@ -12,6 +12,45 @@ import { fetchBestContent, fetchContent, fetchPosts } from '@/_lib/api'
 import { groupByShow, pickBiggestSeason, getCategoryIds, detectType, showKey } from '@/_lib/utils'
 
 const PAGE_SIZE = 10
+const ROW_SIZE = 13
+
+function ItemsRow({ items, onWatch }) {
+  const { containerRef, showArrows, scroll } = useHorizontalScroll([items])
+
+  if (items.length === 0) return null
+
+  return (
+    <div className="mb-2">
+      <div className="flex items-center justify-end gap-2 px-4 sm:px-10 h-7 mb-1">
+        {showArrows && (
+          <div className="flex gap-2">
+            <button onClick={() => scroll('left')} aria-label="Scroll left"
+              className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6" /></svg>
+            </button>
+            <button onClick={() => scroll('right')} aria-label="Scroll right"
+              className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9,18 15,12 9,6" /></svg>
+            </button>
+          </div>
+        )}
+      </div>
+      <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+        {items.map((g, i) => {
+          const item = g.representative || g
+          const type = detectType(item)
+          const key = item.id ? `item-${item.id}` : `group-${g.displayName || i}`
+          if (type === 'TV Show' || type === 'Anime') {
+            return <ShowCard key={key} group={g} onWatch={onWatch} />
+          }
+          return <ContentCard key={key} item={item} onWatch={onWatch} />
+        })}
+      </div>
+    </div>
+  )
+}
 
 export default function CategoryPage({ filter, label }) {
   const navigate = useRouter()
@@ -62,6 +101,29 @@ export default function CategoryPage({ filter, label }) {
     navigate.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&type=${filter}`)
   }
 
+  const displayItems = isShowType 
+    ? groupByShow(items || []).map(g => {
+        const season = pickBiggestSeason(g)
+        const sNum = season.seasonNum || 1
+        if (Object.keys(g.seasons).length === 0) {
+          g.seasons[sNum] = g.posts
+        }
+        return { ...g, ...season }
+      }).filter((item, idx, arr) => {
+        const key = showKey(item.displayName || '')
+        return key && arr.findIndex(x => showKey(x.displayName || '') === key) === idx
+      })
+    : items || []
+
+  const visibleItems = displayItems.slice(0, visibleCount)
+  const hasMore = visibleCount < displayItems.length
+  const canFetchMore = !hasMore && items?.length >= 100
+
+  const itemRows = []
+  for (let i = 0; i < visibleItems.length; i += ROW_SIZE) {
+    itemRows.push(visibleItems.slice(i, i + ROW_SIZE))
+  }
+
   const handleLoadMore = async () => {
     if (visibleCount < displayItems.length) {
       setVisibleCount(prev => prev + PAGE_SIZE)
@@ -99,30 +161,10 @@ export default function CategoryPage({ filter, label }) {
     return false
   })) || items?.[0] || null
 
-  const displayItems = isShowType 
-    ? groupByShow(items).map(g => {
-        const season = pickBiggestSeason(g)
-        const sNum = season.seasonNum || 1
-        if (Object.keys(g.seasons).length === 0) {
-          g.seasons[sNum] = g.posts
-        }
-        return { ...g, ...season }
-      }).filter((item, idx, arr) => {
-        const key = showKey(item.displayName || '')
-        return key && arr.findIndex(x => showKey(x.displayName || '') === key) === idx
-      })
-    : items || []
-
-  const visibleItems = displayItems.slice(0, visibleCount)
-  const hasMore = visibleCount < displayItems.length
-  const canFetchMore = !hasMore && items?.length >= 100
-
   const handleSearchBtn = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     navigate.push(`/search?type=${filter}`)
   }
-
-  const { containerRef, showArrows, scroll } = useHorizontalScroll([visibleItems])
 
   return (
     <main className="pt-[100px] md:pt-[68px]">
@@ -139,38 +181,12 @@ export default function CategoryPage({ filter, label }) {
         <div className="mb-8">
           <div className="flex items-center justify-between px-4 sm:px-10 mb-4">
             <h2 className="text-xl font-bold text-white">More {catLabel}</h2>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-[#808080]">{displayItems.length} items</span>
-              {showArrows && (
-                <div className="flex gap-2">
-                  <button onClick={() => scroll('left')} aria-label="Scroll left"
-                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6" /></svg>
-                  </button>
-                  <button onClick={() => scroll('right')} aria-label="Scroll right"
-                    className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9,18 15,12 9,6" /></svg>
-                  </button>
-                </div>
-              )}
-            </div>
+            <span className="text-sm text-[#808080]">{displayItems.length} items</span>
           </div>
           {visibleItems.length === 0 ? (
             <p className="px-4 sm:px-10 text-[#808080]">No {catLabel.toLowerCase()} available</p>
           ) : (
-            <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
-              {visibleItems.map((g, i) => {
-                const item = g.representative || g
-                const type = detectType(item)
-                const key = item.id ? `item-${item.id}` : `group-${g.displayName || i}`
-                if (type === 'TV Show' || type === 'Anime') {
-                  return <ShowCard key={key} group={g} onWatch={openPlayer} />
-                }
-                return <ContentCard key={key} item={item} onWatch={openPlayer} />
-              })}
-            </div>
+            itemRows.map((row, i) => <ItemsRow key={i} items={row} onWatch={openPlayer} />)
           )}
 
           {(hasMore || canFetchMore) && (
