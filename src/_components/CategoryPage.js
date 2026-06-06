@@ -21,7 +21,7 @@ function ItemsRow({ items, onWatch }) {
 
   return (
     <div className="mb-2">
-      <div className="flex items-center justify-end gap-2 px-4 sm:px-10 h-7 mb-1">
+      <div className="flex items-center justify-end gap-2 px-4 sm:px-10 h-7 mb-3">
         {showArrows && (
           <div className="flex gap-2">
             <button onClick={() => scroll('left')} aria-label="Scroll left"
