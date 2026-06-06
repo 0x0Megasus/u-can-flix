@@ -101,7 +101,8 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
         )}
       </div>
       {displayLoading ? (
-        <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
+        <div className="relative">
+          <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px]">
               <div className="aspect-[2/3] rounded bg-[#2a2a2a] animate-shimmer mb-2" />
@@ -110,10 +111,14 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
             </div>
           ))}
         </div>
+          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
+        </div>
       ) : displayItems.length === 0 ? (
         <p className="px-4 sm:px-10 text-[#808080]">No content available</p>
       ) : (
-        <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+        <div className="relative">
+          <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
           {displayItems.map((item, i) => {
             const itemType = detectType(item)
             const isShow = itemType === 'TV Show' || itemType === 'Anime'
@@ -132,6 +137,9 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
             }
             return <ContentCard key={key} item={item} onWatch={onWatch} />
           })}
+        </div>
+          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
         </div>
       )}
     </section>

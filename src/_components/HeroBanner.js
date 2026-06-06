@@ -19,6 +19,9 @@ export default function HeroBanner({ item, onWatch, loading }) {
       <section className="relative h-[80vh] min-h-[400px] bg-[#0a0a0a]">
         <div className="absolute inset-0 animate-shimmer" />
         <div className="hero-gradient absolute inset-0" />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to right, #141414 0%, transparent 12%, transparent 88%, #141414 100%)' }}
+        />
         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2">
           <div className="w-4 h-4 border-2 border-[#e50914] border-t-transparent rounded-full animate-spin" />
           <span className="text-[#808080] text-sm">Loading content...</span>
@@ -83,6 +86,9 @@ export default function HeroBanner({ item, onWatch, loading }) {
         <div className="absolute inset-0" style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover', opacity: 0 }} />
       </div>
       <div className="hero-gradient absolute inset-0" />
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'linear-gradient(to right, #141414 0%, transparent 12%, transparent 88%, #141414 100%)' }}
+      />
       <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10 max-w-[1440px] mx-auto">
         <span className="inline-block px-3 py-1 rounded text-xs font-bold uppercase tracking-wider mb-3"
           style={{ background: type === 'Movie' ? '#e50914' : type === 'TV Show' ? '#2c3e50' : type === 'Anime' ? '#9C27B0' : '#e50914' }}

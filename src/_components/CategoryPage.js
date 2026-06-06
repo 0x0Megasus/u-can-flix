@@ -37,7 +37,8 @@ function ItemsRow({ items, onWatch }) {
           </div>
         )}
       </div>
-      <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+      <div className="relative">
+        <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
         {items.map((g, i) => {
           const item = g.representative || g
           const type = detectType(item)
@@ -47,6 +48,9 @@ function ItemsRow({ items, onWatch }) {
           }
           return <ContentCard key={key} item={item} onWatch={onWatch} />
         })}
+      </div>
+        <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
       </div>
     </div>
   )
