@@ -4,8 +4,7 @@ import AppShell from "@/_components/AppShell";
 export async function generateMetadata() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ucanflix.com';
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'U Can Flix';
-  const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '';
-
+  
   return {
     metadataBase: new URL(siteUrl),
     title: {
@@ -29,12 +28,7 @@ export async function generateMetadata() {
       title: `${siteName} - Stream Movies, TV Shows & Anime Free Online`,
       description: `Watch free movies, TV shows, and anime online in HD streaming at ${siteName}.`,
       images: ['/og-image.jpg'],
-    },
-    ...(googleVerification && {
-      verification: {
-        google: googleVerification,
-      },
-    }),
+    }
   };
 }
 
