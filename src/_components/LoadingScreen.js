@@ -1,6 +1,6 @@
 export default function LoadingScreen() {
   return (
-    <section className="pt-[100px] px-4 sm:px-10 lg:px-[200px] pb-12">
+    <section className="pt-[100px] px-4 sm:px-10 pb-12">
       <div className="mb-8 max-w-[1440px] mx-auto">
         <div className="h-8 w-48 bg-[#222] rounded animate-shimmer mb-6" />
         <div className="flex gap-3 overflow-hidden">

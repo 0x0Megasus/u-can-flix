@@ -7,7 +7,7 @@ export default function AppShell({ children }) {
   return (
     <PlayerProvider>
       <Navbar />
-      <main className="min-h-screen">
+      <main className="min-h-screen lg:px-[200px]">
         {children}
       </main>
       <Footer />

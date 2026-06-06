@@ -111,7 +111,7 @@ function SearchContent({ onWatch }) {
 
   return (
     <>
-      <div className="flex items-center justify-between px-4 sm:px-10 lg:px-[200px] py-4 border-b border-[#333]">
+      <div className="flex items-center justify-between px-4 sm:px-10 py-4 border-b border-[#333]">
         <div className="flex gap-2">
           {SEARCH_TYPES.map(t => (
             <button
@@ -135,7 +135,7 @@ function SearchContent({ onWatch }) {
         </button>
       </div>
 
-      <div className="flex items-stretch gap-2 px-4 sm:px-10 lg:px-[200px] py-4 max-w-2xl">
+      <div className="flex items-stretch gap-2 px-4 sm:px-10 py-4 max-w-2xl">
           <input
             className="flex-1 px-4 py-3.5 rounded bg-[#333] text-white text-base border-none outline-none focus:ring-2 focus:ring-[#e50914] placeholder-[#808080]"
             type="text"
@@ -154,7 +154,7 @@ function SearchContent({ onWatch }) {
           </button>
         </div>
 
-      <div className="px-4 sm:px-10 lg:px-[200px]">
+      <div className="px-4 sm:px-10">
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
             {Array.from({ length: 8 }).map((_, i) => (

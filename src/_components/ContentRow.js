@@ -45,7 +45,7 @@ export default function ContentRow({ title, filter, onWatch, searchTerm = '', ca
 
   return (
     <section className="mb-8">
-      <div className="flex items-center justify-between mb-4 px-4 sm:px-10 lg:px-[200px]">
+      <div className="flex items-center justify-between mb-4 px-4 sm:px-10">
         <h2 className="text-xl font-bold text-white tracking-tight">{title}</h2>
         {showArrows && (
           <div className="flex gap-2">
@@ -64,7 +64,7 @@ export default function ContentRow({ title, filter, onWatch, searchTerm = '', ca
       </div>
 
       {loading && allItems.length === 0 ? (
-        <div className="flex gap-3 px-4 sm:px-10 lg:px-[200px] overflow-hidden">
+        <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px]">
               <div className="aspect-[2/3] rounded bg-[#222] animate-shimmer mb-2" />
@@ -74,16 +74,16 @@ export default function ContentRow({ title, filter, onWatch, searchTerm = '', ca
           ))}
         </div>
       ) : displayed.length === 0 ? (
-        <p className="px-4 sm:px-10 lg:px-[200px] text-[#808080]">No content available</p>
+        <p className="px-4 sm:px-10 text-[#808080]">No content available</p>
       ) : (
         <>
-          <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 lg:px-[200px] overflow-x-auto scrollbar-hide pb-2">
+          <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
             {displayed.map((item, i) => (
               <ContentCard key={item.id || i} item={item} onWatch={onWatch} />
             ))}
           </div>
           <div ref={observerRef} className="h-px" />
-          {loading && <p className="px-4 sm:px-10 lg:px-[200px] text-[#808080] text-sm mt-2">Loading more...</p>}
+          {loading && <p className="px-4 sm:px-10 text-[#808080] text-sm mt-2">Loading more...</p>}
         </>
       )}
     </section>
