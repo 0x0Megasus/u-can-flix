@@ -51,17 +51,6 @@ export default function CategoryPage({ filter, label }) {
   const [loadingMore, setLoadingMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const applyCategoryFilter = useCallback((items) => {
-    if (!Array.isArray(items)) return []
-    return items.filter(item => {
-      const cats = getCategoryIds(item)
-      if (filter === 'anime') return cats.some(c => [5, 8].includes(c)) && !cats.some(c => [7, 9].includes(c))
-      if (filter === 'tv') return cats.some(c => [7, 9].includes(c)) && !cats.some(c => [5, 8].includes(c)) && !cats.some(c => [3, 4].includes(c))
-      if (filter === 'movies') return cats.some(c => [3, 4].includes(c)) && !cats.some(c => [7, 9].includes(c))
-      return true
-    })
-  }, [filter])
-
   const handleWatch = useCallback((item) => {
     sessionStorage.setItem('watchItem', JSON.stringify(item))
     navigate.push(`/watch/${item.id}`)
@@ -78,7 +67,7 @@ export default function CategoryPage({ filter, label }) {
       try {
         const data = await fetchContent(filter)
         if (!cancelled) {
-          setItems(applyCategoryFilter(data))
+          setItems(Array.isArray(data) ? data : [])
           setLoading(false)
         }
       } catch {
@@ -95,7 +84,7 @@ export default function CategoryPage({ filter, label }) {
     }
 
     return () => { cancelled = true }
-  }, [filter, applyCategoryFilter])
+  }, [filter])
 
   const catLabel = label || (filter === 'movies' ? 'Movies' : filter === 'tv' ? 'TV Shows' : 'Anime')
   const isShowType = filter === 'tv' || filter === 'anime'
@@ -137,8 +126,8 @@ export default function CategoryPage({ filter, label }) {
     if (loadingMore) return
     setLoadingMore(true)
     const nextPage = Math.floor((items?.length || 0) / 50) + 1
-      const more = applyCategoryFilter(await fetchPosts({ filter, page: nextPage, perPage: 50 }).catch(() => []))
-    if (more.length > 0) {
+    const more = await fetchPosts({ filter, page: nextPage, perPage: 50 }).catch(() => [])
+    if (Array.isArray(more) && more.length > 0) {
       setItems(prev => {
         const seen = new Set((prev || []).map(p => p.id))
         const fresh = more.filter(p => !seen.has(p.id))
