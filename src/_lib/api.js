@@ -154,34 +154,32 @@ export async function fetchShowEpisodes(showName, categoryIds) {
 
   let allPosts = await doFetch(showName)
 
-  if (allPosts.length > 0) {
-    toCache(key, allPosts);
-    return allPosts;
-  }
-
-  const firstWord = normalizeText(showName).split(/\s+/)[0]
-  if (firstWord && firstWord.length > 2) {
-    allPosts = await doFetch(firstWord)
-
-    const matched = allPosts.filter(post => matchTitle(post, showName))
-    if (matched.length > 0) {
-      toCache(key, matched);
-      return matched;
-    }
-
-    const titleFallback = allPosts.filter(post => {
-      const t = normalizeText(post.title?.rendered || '')
-      return t.includes(normalizeText(firstWord))
-    })
-    if (titleFallback.length > 0) {
-      toCache(key, titleFallback);
-      return titleFallback;
+  if (allPosts.length === 0) {
+    const firstWord = normalizeText(showName).split(/\s+/)[0]
+    if (firstWord && firstWord.length > 2) {
+      allPosts = await doFetch(firstWord)
     }
   }
 
+  const matchedPosts = allPosts.filter(post => matchTitle(post, showName))
+
+  if (matchedPosts.length > 0) {
+    toCache(key, matchedPosts);
+    return matchedPosts;
+  }
+
   if (allPosts.length > 0) {
-    toCache(key, allPosts);
-    return allPosts;
+    const firstWord = normalizeText(showName).split(/\s+/)[0]
+    if (firstWord && firstWord.length > 2) {
+      const fallback = allPosts.filter(post => {
+        const t = normalizeText(post.title?.rendered || '')
+        return t.includes(firstWord)
+      })
+      if (fallback.length > 0) { toCache(key, fallback); return fallback; }
+    }
+    const result = allPosts.slice(0, 50)
+    toCache(key, result);
+    return result;
   }
 
   return [];

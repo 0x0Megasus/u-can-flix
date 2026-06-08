@@ -71,30 +71,14 @@ export function detectType(item) {
   const hasTVKeyword = /مسلسل|series|season|الموسم|الحلقة|episode/i.test(title);
   const hasMovieKeyword = /فيلم|movie/i.test(title);
 
-  const termNames = [];
-  const terms = item._embedded?.['wp:term'];
-  if (terms) {
-    terms.forEach(group => {
-      if (Array.isArray(group)) {
-        group.forEach(term => {
-          if (term?.name) termNames.push(term.name.toLowerCase());
-        });
-      }
-    });
-  }
-  const hasTVName = termNames.some(n => /tv|series|مسلسل/.test(n));
-  const hasMovieName = termNames.some(n => /movie|film|فيلم/.test(n));
-  const hasAnimeName = termNames.some(n => /anime|انمي/.test(n));
-
-  if (isAnimeCat && !isTVCat && !isMovieCat && !hasTVName) {
+  if (isAnimeCat && !isTVCat && !isMovieCat) {
     return 'Anime';
   }
-  if (isAnimeCat && !isTVCat && !hasTVName && (isMovieCat || hasMovieName || (hasMovieKeyword && !hasTVKeyword))) {
+  if (isAnimeCat && !isTVCat && (isMovieCat || (hasMovieKeyword && !hasTVKeyword))) {
     return 'Anime Movie';
   }
-  if (isTVCat || hasTVName) return 'TV Show';
-  if (isMovieCat || hasMovieName) return 'Movie';
-  if (isAnimeCat || hasAnimeName) return 'Anime';
+  if (isTVCat) return 'TV Show';
+  if (isMovieCat) return 'Movie';
 
   if (hasAnimeKeyword) {
     if (hasMovieKeyword && !hasTVKeyword) return 'Anime Movie';
