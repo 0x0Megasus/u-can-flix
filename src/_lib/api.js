@@ -1,4 +1,4 @@
-import { matchTitle } from './utils';
+import { matchTitle, normalizeText } from './utils';
 
 const REQUEST_CACHE = new Map();
 const CACHE_TTL = 30 * 60 * 1000;
@@ -117,61 +117,72 @@ export async function fetchShowEpisodes(showName, categoryIds) {
   const cached = fromCache(key);
   if (cached) return cached;
 
-  const showLower = showName.toLowerCase().trim();
-  const params = new URLSearchParams();
-  params.set('per_page', '100');
-  params.set('_embed', '');
-  params.set('page', '1');
-  params.set('search', showName);
-  if (categoryIds) params.set('categories', categoryIds);
+  async function doFetch(searchTerm) {
+    const p = new URLSearchParams();
+    p.set('per_page', '100');
+    p.set('_embed', '');
+    p.set('page', '1');
+    p.set('search', searchTerm);
+    if (categoryIds) p.set('categories', categoryIds);
 
-  const url = `/api/wp/v2/posts?${params.toString()}`;
+    let firstPage = [], totalPages = 1;
+    try {
+      const res = await fetch(`/api/wp/v2/posts?${p.toString()}`);
+      if (!res.ok) return [];
+      totalPages = parseInt(res.headers.get('X-WP-TotalPages') || '1');
+      firstPage = await res.json();
+    } catch { return []; }
 
-  let firstPageData = [];
-  let totalPages = 1;
+    const all = [...firstPage];
+    const seen = new Set(all.map(x => x.id));
 
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`API error ${res.status}`);
-    totalPages = parseInt(res.headers.get('X-WP-TotalPages') || '1');
-    firstPageData = await res.json();
-  } catch (err) {
-    console.error('Failed to fetch first page of episodes:', err);
-    return [];
+    if (totalPages > 1) {
+      const pages = Array.from({ length: Math.min(totalPages - 1, 7) }, (_, i) => i + 2);
+      const results = await Promise.allSettled(pages.map(async (pg) => {
+        const pp = new URLSearchParams(p);
+        pp.set('page', String(pg));
+        try { const r = await fetch(`/api/wp/v2/posts?${pp.toString()}`); return r.ok ? r.json() : []; } catch { return []; }
+      }));
+      for (const r of results) {
+        if (r.status === 'fulfilled' && Array.isArray(r.value)) {
+          r.value.forEach(post => { if (!seen.has(post.id)) { all.push(post); seen.add(post.id); } });
+        }
+      }
+    }
+    return all;
   }
 
-  const allPosts = [...firstPageData];
-  const seen = new Set(allPosts.map(p => p.id));
+  let allPosts = await doFetch(showName)
 
-  if (totalPages > 1) {
-    const remainingPages = Array.from({ length: Math.min(totalPages - 1, 7) }, (_, i) => i + 2);
-    const results = await Promise.allSettled(remainingPages.map(async (page) => {
-      const pageParams = new URLSearchParams(params);
-      pageParams.set('page', String(page));
-      try {
-        const pageRes = await fetch(`/api/wp/v2/posts?${pageParams.toString()}`);
-        if (!pageRes.ok) return [];
-        return pageRes.json();
-      } catch { return []; }
-    }));
-
-    for (const res of results) {
-      if (res.status === 'fulfilled' && Array.isArray(res.value)) {
-        res.value.forEach(post => {
-          if (!seen.has(post.id)) { allPosts.push(post); seen.add(post.id); }
-        });
-      }
+  if (allPosts.length === 0) {
+    const firstWord = normalizeText(showName).split(/\s+/)[0]
+    if (firstWord && firstWord.length > 2) {
+      allPosts = await doFetch(firstWord)
     }
   }
 
-  const matchedPosts = allPosts.filter(post => {
-    const title = (post.title?.rendered || '').toLowerCase().trim();
-    return title.includes(showLower) ||
-           (showLower.includes(title.length > 3 ? title : '____NOT_MATCH____'));
-  });
+  const matchedPosts = allPosts.filter(post => matchTitle(post, showName))
 
-  toCache(key, matchedPosts);
-  return matchedPosts;
+  if (matchedPosts.length > 0) {
+    toCache(key, matchedPosts);
+    return matchedPosts;
+  }
+
+  if (allPosts.length > 0) {
+    const firstWord = normalizeText(showName).split(/\s+/)[0]
+    if (firstWord && firstWord.length > 2) {
+      const fallback = allPosts.filter(post => {
+        const t = normalizeText(post.title?.rendered || '')
+        return t.includes(firstWord)
+      })
+      if (fallback.length > 0) { toCache(key, fallback); return fallback; }
+    }
+    const result = allPosts.slice(0, 50)
+    toCache(key, result);
+    return result;
+  }
+
+  return [];
 }
 
 export async function fetchContent(filter, search = '', page = 1, categories = '') {
