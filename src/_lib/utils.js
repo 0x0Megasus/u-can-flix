@@ -71,12 +71,11 @@ export function detectType(item) {
   const hasTVKeyword = /مسلسل|series|season|الموسم|الحلقة|episode/i.test(title);
   const hasMovieKeyword = /فيلم|movie/i.test(title);
 
-  if (isAnimeCat && !isTVCat && !isMovieCat) {
+  if (isAnimeCat) {
+    if (isMovieCat || (hasMovieKeyword && !hasTVKeyword)) return 'Anime Movie';
     return 'Anime';
   }
-  if (isAnimeCat && !isTVCat && (isMovieCat || (hasMovieKeyword && !hasTVKeyword))) {
-    return 'Anime Movie';
-  }
+  if (isTVCat && !isAnimeCat) return 'TV Show';
   if (isTVCat) return 'TV Show';
   if (isMovieCat) return 'Movie';
 
