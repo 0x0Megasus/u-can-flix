@@ -110,7 +110,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
   const typeColor = type === 'Movie' ? 'var(--accent)' : type === 'TV Show' ? '#2563eb' : '#7c3aed'
 
   return (
-    <section className="relative h-[90vh] min-h-[550px] pt-[64px]">
+    <section className="relative h-[90vh] min-h-[550px] pt-[64px] -mx-4 sm:-mx-10 lg:-mx-[200px]">
       <div className="absolute inset-0 bg-[var(--bg-primary)] overflow-hidden">
         {image ? (
           image.startsWith('data:') ? (
@@ -144,7 +144,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
       <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-primary)]/80 via-transparent to-[var(--bg-primary)]/40 pointer-events-none" />
 
       <div className="absolute inset-0 flex items-end">
-        <div className="w-full px-4 sm:px-10 lg:px-[200px] pb-16 md:pb-28 z-10 max-w-[1440px] mx-auto"
+        <div className="w-full px-4 sm:px-10 pb-16 md:pb-28 z-10 max-w-[1440px] mx-auto"
           style={{ animation: 'fadeInUp 0.8s var(--ease-out-expo)' }}
         >
           <div className="max-w-2xl">

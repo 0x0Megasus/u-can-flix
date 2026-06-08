@@ -10,7 +10,7 @@ export default function AppShell({ children }) {
   return (
     <div className="relative min-h-screen flex flex-col">
       {!isWatchPage && <Navbar />}
-      <main className="flex-1">
+      <main className="flex-1 px-4 sm:px-10 lg:px-[200px]">
         {children}
       </main>
       {!isWatchPage && <Footer />}

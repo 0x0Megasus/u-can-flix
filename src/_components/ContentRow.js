@@ -46,14 +46,14 @@ export default function ContentRow({ title, filter, searchTerm = '', categories 
 
   return (
     <section className="mb-10">
-      <div className="flex items-center justify-between mb-5 px-4 sm:px-10">
+      <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight">{title}</h2>
         {showArrows && <ScrollArrows onScroll={scroll} />}
       </div>
 
       {loading && allItems.length === 0 ? (
         <div className="relative">
-          <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
+          <div className="flex gap-3 overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]">
               <div className="aspect-[2/3] rounded-[var(--radius-md)] skeleton mb-2" />
@@ -62,24 +62,22 @@ export default function ContentRow({ title, filter, searchTerm = '', categories 
             </div>
           ))}
         </div>
-          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
         </div>
       ) : displayed.length === 0 ? (
-        <p className="px-4 sm:px-10 text-[var(--text-muted)] text-sm">No content available</p>
+        <p className="text-[var(--text-muted)] text-sm">No content available</p>
       ) : (
         <>
           <div className="relative">
-            <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+            <div ref={containerRef} className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
             {displayed.map((item, i) => (
               <ContentCard key={item.id || i} item={item} />
             ))}
           </div>
-            <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
           </div>
           <div ref={observerRef} className="h-px" />
-          {loading && <p className="px-4 sm:px-10 text-[var(--text-muted)] text-sm mt-3">Loading more...</p>}
+          {loading && <p className="text-[var(--text-muted)] text-sm mt-3">Loading more...</p>}
         </>
       )}
     </section>

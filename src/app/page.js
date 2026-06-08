@@ -92,7 +92,7 @@ export default function HomePage() {
         <TopRatedRow title="Anime" filter="anime" limit={10} />
       </section>
 
-      <div className="px-4 sm:px-10 lg:px-[200px] pb-16 mt-8">
+      <div className="pb-16 mt-8">
         <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
           <input
             className="flex-1 px-4 py-3 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-base border border-[var(--border-default)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder-[var(--text-muted)] transition-all duration-300"

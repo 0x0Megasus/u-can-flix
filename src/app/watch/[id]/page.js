@@ -227,16 +227,16 @@ export default function WatchPage() {
   const activePlayerUrl = activeEpisode ? extractPlayerUrl(activeEpisode) : ''
 
   return (
-    <div className="h-screen flex flex-col bg-[var(--bg-primary)]">
+    <div className={`${activeEpisode ? 'h-screen flex flex-col' : 'min-h-screen'} bg-[var(--bg-primary)] -mx-4 sm:-mx-10 lg:-mx-[200px]`}>
       <div className="shrink-0 z-50 bg-[var(--bg-primary)] border-b border-[var(--border-subtle)]">
         <div className="flex items-center justify-between px-4 sm:px-10 lg:px-[200px] py-3 max-w-[1440px] mx-auto">
-          <button onClick={() => router.back()} aria-label="Back"
+          <button onClick={() => activeEpisode ? (setActiveEpisode(null), setPlayerLoaded(false)) : router.back()} aria-label="Back"
             className="flex items-center gap-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors duration-300 bg-transparent border-none cursor-pointer text-sm"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="15,18 9,12 15,6" />
             </svg>
-            Back
+            {activeEpisode ? 'Episodes' : 'Back'}
           </button>
           <h1 className="text-[var(--text-primary)] font-bold truncate mx-4 text-sm sm:text-base">{showName}</h1>
           <div className="w-16" />
@@ -244,7 +244,7 @@ export default function WatchPage() {
       </div>
 
       {activeEpisode && (
-        <div className="relative w-full bg-black" style={{ aspectRatio: '16/9' }}>
+        <div className="relative w-full bg-black shrink-0 lg:max-w-6xl lg:mx-auto lg:rounded-2xl lg:overflow-hidden lg:shadow-2xl" style={{ aspectRatio: '16/9', maxHeight: '55vh' }}>
           {!playerLoaded && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black z-10">
               <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />

@@ -21,11 +21,11 @@ function ItemsRow({ items }) {
 
   return (
     <div className="mb-2">
-      <div className="flex items-center justify-end gap-2 px-4 sm:px-10 h-7 mb-3">
+      <div className="flex items-center justify-end gap-2  h-7 mb-3">
         {showArrows && <ScrollArrows onScroll={scroll} />}
       </div>
       <div className="relative">
-        <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
+        <div ref={containerRef} className="flex gap-3  overflow-x-auto scrollbar-hide pb-2">
         {items.map((g, i) => {
           const item = g.representative || g
           const type = detectType(item)
@@ -36,8 +36,7 @@ function ItemsRow({ items }) {
           return <ContentCard key={key} item={item} />
         })}
       </div>
-        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
       </div>
     </div>
   )
@@ -169,12 +168,12 @@ export default function CategoryPage({ filter, label }) {
         <TopRatedRow title={`Top ${catLabel}`} filter={filter} limit={10} />
 
         <div className="mb-10">
-          <div className="flex items-center justify-between px-4 sm:px-10 mb-5">
+          <div className="flex items-center justify-between  mb-5">
             <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight">More {catLabel}</h2>
             <span className="text-sm text-[var(--text-muted)]">{displayItems.length} items</span>
           </div>
           {visibleItems.length === 0 ? (
-            <p className="px-4 sm:px-10 text-[var(--text-muted)] text-sm">No {catLabel.toLowerCase()} available</p>
+            <p className=" text-[var(--text-muted)] text-sm">No {catLabel.toLowerCase()} available</p>
           ) : (
             itemRows.map((row, i) => <ItemsRow key={i} items={row} />)
           )}
@@ -203,7 +202,7 @@ export default function CategoryPage({ filter, label }) {
             </div>
           )}
 
-          <div className="px-4 sm:px-10 pb-12 mt-10">
+          <div className=" pb-12 mt-10">
             <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
               <input
                 className="flex-1 px-4 py-3 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-base border border-[var(--border-default)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder-[var(--text-muted)] transition-all duration-300"
