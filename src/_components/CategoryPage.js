@@ -1,20 +1,20 @@
 'use client';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { usePlayer } from '@/_components/PlayerProvider'
 import HeroBanner from '@/_components/HeroBanner'
 import ContentCard from '@/_components/ContentCard'
 import ShowCard from '@/_components/ShowCard'
 import TopRatedRow from '@/_components/TopRatedRow'
 import LoadingSkeleton from '@/_components/LoadingSkeleton'
+import ScrollArrows from '@/_components/ScrollArrows'
 import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
 import { fetchBestContent, fetchContent, fetchPosts } from '@/_lib/api'
 import { groupByShow, pickBiggestSeason, getCategoryIds, detectType, showKey } from '@/_lib/utils'
 
-const PAGE_SIZE = 10
-const ROW_SIZE = 13
+const PAGE_SIZE = 12
+const ROW_SIZE = 12
 
-function ItemsRow({ items, onWatch }) {
+function ItemsRow({ items }) {
   const { containerRef, showArrows, scroll } = useHorizontalScroll([items])
 
   if (items.length === 0) return null
@@ -22,20 +22,7 @@ function ItemsRow({ items, onWatch }) {
   return (
     <div className="mb-2">
       <div className="flex items-center justify-end gap-2 px-4 sm:px-10 h-7 mb-3">
-        {showArrows && (
-          <div className="flex gap-2">
-            <button onClick={() => scroll('left')} aria-label="Scroll left"
-              className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6" /></svg>
-            </button>
-            <button onClick={() => scroll('right')} aria-label="Scroll right"
-              className="w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9,18 15,12 9,6" /></svg>
-            </button>
-          </div>
-        )}
+        {showArrows && <ScrollArrows onScroll={scroll} />}
       </div>
       <div className="relative">
         <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
@@ -44,13 +31,13 @@ function ItemsRow({ items, onWatch }) {
           const type = detectType(item)
           const key = item.id ? `item-${item.id}` : `group-${g.displayName || i}`
           if (type === 'TV Show' || type === 'Anime') {
-            return <ShowCard key={key} group={g} onWatch={onWatch} />
+            return <ShowCard key={key} group={g} />
           }
-          return <ContentCard key={key} item={item} onWatch={onWatch} />
+          return <ContentCard key={key} item={item} />
         })}
       </div>
-        <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
       </div>
     </div>
   )
@@ -58,13 +45,17 @@ function ItemsRow({ items, onWatch }) {
 
 export default function CategoryPage({ filter, label }) {
   const navigate = useRouter()
-  const { openPlayer } = usePlayer()
   const [items, setItems] = useState(null)
   const [loading, setLoading] = useState(true)
   const [heroItem, setHeroItem] = useState(null)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [loadingMore, setLoadingMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+
+  const handleWatch = useCallback((item) => {
+    sessionStorage.setItem('watchItem', JSON.stringify(item))
+    navigate.push(`/watch/${item.id}`)
+  }, [navigate])
 
   useEffect(() => {
     let cancelled = false
@@ -149,8 +140,8 @@ export default function CategoryPage({ filter, label }) {
 
   if (loading) {
     return (
-      <main className="pt-[100px] md:pt-[68px]">
-        <HeroBanner loading={true} onWatch={openPlayer} />
+      <main className="pt-[100px] md:pt-[72px]">
+        <HeroBanner loading={true} onWatch={handleWatch} />
         <LoadingSkeleton title={`Top ${catLabel}`} count={10} grid={true} />
         <LoadingSkeleton title={`More ${catLabel}`} count={10} grid={false} />
       </main>
@@ -171,37 +162,35 @@ export default function CategoryPage({ filter, label }) {
   }
 
   return (
-    <main className="pt-[100px] md:pt-[68px]">
-      {catHero && <HeroBanner item={catHero} onWatch={openPlayer} />}
+    <main className="pt-[100px] md:pt-[72px]">
+      {catHero && <HeroBanner item={catHero} onWatch={handleWatch} />}
       
       <section className="pt-12">
-        <TopRatedRow 
-          title={`Top ${catLabel}`} 
-          filter={filter} 
-          onWatch={openPlayer} 
-          limit={10} 
-        />
+        <TopRatedRow title={`Top ${catLabel}`} filter={filter} limit={10} />
 
-        <div className="mb-8">
-          <div className="flex items-center justify-between px-4 sm:px-10 mb-4">
-            <h2 className="text-xl font-bold text-white">More {catLabel}</h2>
-            <span className="text-sm text-[#808080]">{displayItems.length} items</span>
+        <div className="mb-10">
+          <div className="flex items-center justify-between px-4 sm:px-10 mb-5">
+            <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight">More {catLabel}</h2>
+            <span className="text-sm text-[var(--text-muted)]">{displayItems.length} items</span>
           </div>
           {visibleItems.length === 0 ? (
-            <p className="px-4 sm:px-10 text-[#808080]">No {catLabel.toLowerCase()} available</p>
+            <p className="px-4 sm:px-10 text-[var(--text-muted)] text-sm">No {catLabel.toLowerCase()} available</p>
           ) : (
-            itemRows.map((row, i) => <ItemsRow key={i} items={row} onWatch={openPlayer} />)
+            itemRows.map((row, i) => <ItemsRow key={i} items={row} />)
           )}
 
           {(hasMore || canFetchMore) && (
-            <div className="text-center mt-8">
+            <div className="text-center mt-10">
               <button
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="px-8 py-3 rounded bg-[#e50914] text-white font-bold border-none cursor-pointer hover:bg-[#f40612] transition-colors disabled:opacity-50"
+                className="px-8 py-3 rounded-full bg-[var(--accent)] text-white font-bold border-none cursor-pointer hover:bg-[var(--accent-hover)] transition-all duration-300 disabled:opacity-50 shadow-lg shadow-[var(--accent-glow)] text-sm"
               >
                 {loadingMore ? (
-                  <>Loading...</>
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Loading...
+                  </span>
                 ) : canFetchMore ? (
                   <>Load More from Page {Math.floor((items?.length || 0) / 50) + 1}</>
                 ) : (
@@ -209,29 +198,29 @@ export default function CategoryPage({ filter, label }) {
                 )}
               </button>
               {!hasMore && !canFetchMore && displayItems.length > 0 && (
-                <p className="text-[#808080] text-sm mt-3">You&apos;ve seen all {catLabel.toLowerCase()}</p>
+                <p className="text-[var(--text-muted)] text-sm mt-4">You&apos;ve seen all {catLabel.toLowerCase()}</p>
               )}
             </div>
           )}
 
-          <div className="px-4 sm:px-10 pb-12 mt-8">
+          <div className="px-4 sm:px-10 pb-12 mt-10">
             <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
               <input
-                className="flex-1 px-4 py-3.5 rounded bg-[#333] text-white text-base border-none outline-none focus:ring-2 focus:ring-[#e50914] placeholder-[#808080]"
+                className="flex-1 px-4 py-3 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-base border border-[var(--border-default)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder-[var(--text-muted)] transition-all duration-300"
                 type="text"
                 placeholder={`Search ${catLabel}...`}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
               <button type="submit" aria-label="Search"
-                className="px-5 py-3.5 rounded bg-[#e50914] text-white border-none cursor-pointer hover:bg-[#f40612] transition-colors flex items-center"
+                className="px-5 py-3 rounded-[var(--radius-md)] bg-[var(--accent)] text-white border-none cursor-pointer hover:bg-[var(--accent-hover)] transition-all duration-300 flex items-center justify-center"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </button>
               <button type="button" onClick={handleSearchBtn}
-                className="px-5 py-3.5 rounded bg-[#444] text-[#b3b3b3] hover:text-white border-none cursor-pointer text-sm font-medium transition-colors"
+                className="px-5 py-3 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-default)] cursor-pointer text-sm font-medium transition-all duration-300"
               >
                 Advanced
               </button>

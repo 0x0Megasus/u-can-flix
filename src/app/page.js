@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { usePlayer } from '@/_components/PlayerProvider'
 import HeroBanner from '@/_components/HeroBanner'
 import TopRatedRow from '@/_components/TopRatedRow'
 import { fetchContent, fetchBestContent } from '@/_lib/api'
@@ -10,10 +9,14 @@ import { getCategoryIds } from '@/_lib/utils'
 
 export default function HomePage() {
   const navigate = useRouter()
-  const { openPlayer } = usePlayer()
   const [heroItem, setHeroItem] = useState(null)
   const [heroLoading, setHeroLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  const handleWatch = useCallback((item) => {
+    sessionStorage.setItem('watchItem', JSON.stringify(item))
+    navigate.push(`/watch/${item.id}`)
+  }, [navigate])
 
   useEffect(() => {
     let cancelled = false
@@ -82,31 +85,31 @@ export default function HomePage() {
           </p>
         </section>
       </div>
-      <HeroBanner item={heroItem} onWatch={openPlayer} loading={heroLoading} />
+      <HeroBanner item={heroItem} onWatch={handleWatch} loading={heroLoading} />
       <section className="pt-12">
-        <TopRatedRow title="Top Movies" filter="movies" onWatch={openPlayer} limit={10} />
-        <TopRatedRow title="TV Shows" filter="tv" onWatch={openPlayer} limit={10} />
-        <TopRatedRow title="Anime" filter="anime" onWatch={openPlayer} limit={10} />
+        <TopRatedRow title="Top Movies" filter="movies" limit={10} />
+        <TopRatedRow title="TV Shows" filter="tv" limit={10} />
+        <TopRatedRow title="Anime" filter="anime" limit={10} />
       </section>
 
-      <div className="px-4 sm:px-10 pb-12">
+      <div className="px-4 sm:px-10 lg:px-[200px] pb-16 mt-8">
         <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
           <input
-            className="flex-1 px-4 py-3.5 rounded bg-[#333] text-white text-base border-none outline-none focus:ring-2 focus:ring-[#e50914] placeholder-[#808080]"
+            className="flex-1 px-4 py-3 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-base border border-[var(--border-default)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder-[var(--text-muted)] transition-all duration-300"
             type="text"
             placeholder="Search movies, TV shows & anime..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
           <button type="submit" aria-label="Search"
-            className="px-5 py-3.5 rounded bg-[#e50914] text-white border-none cursor-pointer hover:bg-[#f40612] transition-colors flex items-center"
+            className="px-5 py-3 rounded-[var(--radius-md)] bg-[var(--accent)] text-white border-none cursor-pointer hover:bg-[var(--accent-hover)] transition-all duration-300 flex items-center justify-center"
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </button>
           <button type="button" onClick={() => navigate.push('/search')}
-            className="px-5 py-3.5 rounded bg-[#444] text-[#b3b3b3] hover:text-white border-none cursor-pointer text-sm font-medium transition-colors"
+            className="px-5 py-3 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-default)] cursor-pointer text-sm font-medium transition-all duration-300"
           >
             Advanced
           </button>

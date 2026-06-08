@@ -1,15 +1,13 @@
 'use client';
 import Image from 'next/image'
-import { useState, useRef } from 'react'
-import { getFeaturedImage, detectType, extractQuality, groupByShow, extractGenres, stripArabic } from '@/_lib/utils'
-import { fetchShowEpisodes } from '@/_lib/api'
-import EpisodeModal from './EpisodeModal'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { getFeaturedImage, detectType, extractQuality, extractGenres, stripArabic } from '@/_lib/utils'
 
-export default function ShowCard({ group, onWatch }) {
-  const [showModal, setShowModal] = useState(false)
-  const [episodeGroup, setEpisodeGroup] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const fetchRef = useRef(false)
+export default function ShowCard({ group }) {
+  const router = useRouter()
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   const posts = group?.posts || (group?.id ? [group] : [])
   const fallbackPost = posts.find(p => p?.id) || posts[0]
@@ -18,11 +16,28 @@ export default function ShowCard({ group, onWatch }) {
   if (!post) return null
 
   const title = stripArabic(group?.displayName || post.title?.rendered || 'Untitled')
-  const image = getFeaturedImage(post, 'medium')
+  const image = imgError ? null : getFeaturedImage(post, 'medium')
   const type = detectType(post)
   const quality = extractQuality(post.title?.rendered || '')
   const genres = extractGenres(post)
   const rating = group?.imdbRating || post.imdbRating
+
+  const handleClick = () => {
+    const data = {
+      item: post,
+      group: {
+        displayName: group.displayName || title,
+        seasons: group.seasons,
+        posts: group.posts,
+        representative: group.representative || post,
+      },
+      type: detectType(post),
+      displayName: title,
+    }
+    sessionStorage.setItem('watchItem', JSON.stringify(data))
+    router.push(`/watch/${post.id}`)
+  }
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
@@ -30,123 +45,76 @@ export default function ShowCard({ group, onWatch }) {
     }
   }
 
-  const handleClick = async () => {
-    if (episodeGroup && episodeGroup.posts.length > 1) {
-      setShowModal(true)
-      return
-    }
-
-    const existingSeasons = Object.values(group.seasons || {})
-    const hasFullData = existingSeasons.some(posts => posts.length > 1)
-
-    if (hasFullData && episodeGroup) {
-      setShowModal(true)
-      return
-    }
-
-    if (fetchRef.current) return
-    fetchRef.current = true
-    setLoading(true)
-    setShowModal(true)
-
-    try {
-      const detectedType = detectType(post)
-      const catIds = detectedType === 'Anime' ? '5,8' : detectedType === 'TV Show' ? '7,9' : ''
-
-      const safeGroup = { ...group }
-      const currentSNum = group.seasonNum || 1
-      if (!safeGroup.seasons || Object.keys(safeGroup.seasons).length === 0) {
-        safeGroup.seasons = { [currentSNum]: [post] }
-      }
-
-      if (!catIds) {
-        setEpisodeGroup(safeGroup)
-        setLoading(false)
-        return
-      }
-
-      const episodes = await fetchShowEpisodes(title, catIds)
-      if (episodes && episodes.length > 0) {
-        const regrouped = groupByShow(episodes)
-        const best = regrouped.find(g => g.displayName.toLowerCase().includes(title.toLowerCase())) || regrouped[0]
-        if (best) {
-          setEpisodeGroup(best)
-        } else {
-          setEpisodeGroup(safeGroup)
-        }
-      } else {
-        setEpisodeGroup(safeGroup)
-      }
-    } catch {
-      const currentSNum = group.seasonNum || 1
-      const safeGroup = { ...group }
-      if (!safeGroup.seasons || Object.keys(safeGroup.seasons).length === 0) {
-        safeGroup.seasons = { [currentSNum]: [post] }
-      }
-      setEpisodeGroup(safeGroup)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const typeColor = type === 'TV Show' ? '#2563eb' : '#7c3aed'
 
   return (
-    <>
-      <article
-        role="button"
-        tabIndex={0}
-        aria-label={`Browse episodes for ${title}`}
-        className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px] cursor-pointer "
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-      >
-        <div className="relative aspect-[2/3] rounded overflow-hidden mb-2 bg-[#1e1e1e]">
-          {image ? (
+    <article
+      role="button"
+      tabIndex={0}
+      aria-label={`Browse episodes for ${title}`}
+      className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px] cursor-pointer group"
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="relative aspect-[2/3] rounded-[var(--radius-md)] overflow-hidden mb-3 bg-[var(--bg-card)] shadow-[var(--shadow-card)] transition-all duration-500 group-hover:shadow-[var(--shadow-elevated)] group-hover:-translate-y-1.5">
+        {image ? (
+          <>
             <Image
-              className="object-cover"
+              className={`object-cover transition-all duration-700 ${imgLoaded ? 'scale-100' : 'scale-110'}`}
               src={image}
               alt={title}
               fill
-              sizes="(min-width: 1024px) 280px, (min-width: 768px) 250px, (min-width: 640px) 200px, 160px"
+              sizes="(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 180px, 160px"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
             />
-          ) : (
-            <div className="w-full h-full bg-[#1e1e1e]" />
-          )}
-          <div className="absolute inset-0 card-overlay-gradient opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-            <button
-              onClick={(e) => { e.stopPropagation(); handleClick(); }}
-              className="w-full py-1.5 rounded bg-[#e50914] text-white text-xs font-bold flex items-center justify-center gap-1 border-none cursor-pointer"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5,3 19,12 5,21" />
-              </svg>
-              Episodes
-            </button>
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500" />
+          </>
+        ) : (
+          <div className="w-full h-full bg-[var(--bg-card)] flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--text-muted)">
+              <polygon points="5,3 19,12 5,21" />
+            </svg>
+          </div>
+        )}
+
+        <div className="absolute inset-0 card-overlay-gradient opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-3 translate-y-2 group-hover:translate-y-0">
+          <div
+            onClick={(e) => { e.stopPropagation(); handleClick(); }}
+            className="w-full py-2 rounded-[var(--radius-sm)] bg-[var(--accent)] text-white text-xs font-bold flex items-center justify-center gap-1.5 border-none cursor-pointer transition-all duration-300 hover:bg-[var(--accent-hover)]"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5,3 19,12 5,21" />
+            </svg>
+            Episodes
           </div>
         </div>
-        <div className="px-0.5">
-          <h3 className="text-sm font-semibold text-white truncate mb-1">{title}</h3>
-          <div className="flex flex-wrap gap-1">
-            <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase"
-              style={{ background: type === 'Anime' ? '#9C27B0' : '#2c3e50', color: '#fff' }}
-            >
-              {type === 'Anime Movie' ? 'Anime' : type}
+
+        {quality && (
+          <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-600/90 text-white shadow-lg backdrop-blur-sm">
+            {quality}
+          </span>
+        )}
+      </div>
+
+      <div className="px-0.5 space-y-1.5">
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate group-hover:text-[var(--accent)] transition-colors duration-300">{title}</h3>
+        <div className="flex flex-wrap gap-1">
+          <span className="text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider"
+            style={{ background: typeColor, color: '#fff' }}
+          >
+            {type === 'Anime Movie' ? 'Anime' : type}
+          </span>
+          {rating && (
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#f5c518] text-black font-bold flex items-center gap-0.5">
+              ★ {rating}
             </span>
-            {quality && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#2d6a4f] text-white">{quality}</span>}
-            {rating && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f5c518] text-black font-bold">★ {rating}</span>}
-            {genres.slice(0, 2).map(g => (
-              <span key={g} className="text-[10px] px-1.5 py-0.5 rounded bg-[#333] text-[#b3b3b3]">{g}</span>
-            ))}
-          </div>
+          )}
+          {genres.slice(0, 1).map(g => (
+            <span key={g} className="text-[9px] px-1.5 py-0.5 rounded-full bg-[var(--bg-tertiary)] text-[var(--text-tertiary)]">{g}</span>
+          ))}
         </div>
-      </article>
-      {showModal && (
-        <EpisodeModal
-          group={episodeGroup}
-          loading={loading && !episodeGroup}
-          onClose={() => { setShowModal(false); fetchRef.current = false }}
-          onWatch={onWatch}
-        />
-      )}
-    </>
+      </div>
+    </article>
   )
 }

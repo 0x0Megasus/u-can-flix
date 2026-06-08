@@ -4,8 +4,9 @@ import { useContent } from '@/_hooks/useContent'
 import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
 import { groupByShow, pickBiggestSeason, hasFullSeason, scoreGroup, matchTitle } from '@/_lib/utils'
 import ShowCard from './ShowCard'
+import ScrollArrows from './ScrollArrows'
 
-export default function GroupedRow({ title, filter, onWatch, page = 1, searchTerm = '', categories = '', externalItems, limit, grid }) {
+export default function GroupedRow({ title, filter, page = 1, searchTerm = '', categories = '', externalItems, limit, grid }) {
   const { items: fetchedItems, loading: fetchLoading } = useContent(filter, searchTerm, page, categories)
   const loading = !externalItems && fetchLoading
 
@@ -30,54 +31,41 @@ export default function GroupedRow({ title, filter, onWatch, page = 1, searchTer
   if (!loading && groups.length === 0) return null
 
   return (
-    <section className="mb-8">
-      <div className="flex items-center justify-between mb-4 px-4 sm:px-10">
-        <h2 className="text-xl font-bold text-white">{title}</h2>
-        {showArrows && (
-          <div className="flex gap-2">
-            <button onClick={() => scroll('left')} aria-label="Scroll left"
-              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6" /></svg>
-            </button>
-            <button onClick={() => scroll('right')} aria-label="Scroll right"
-              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9,18 15,12 9,6" /></svg>
-            </button>
-          </div>
-        )}
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-5 px-4 sm:px-10">
+        <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight">{title}</h2>
+        {showArrows && !grid && <ScrollArrows onScroll={scroll} />}
       </div>
 
       {loading ? (
         <div className="relative">
           <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px]">
-              <div className="aspect-[2/3] rounded bg-[#2a2a2a] animate-shimmer mb-2" />
-              <div className="h-3 rounded bg-[#2a2a2a] animate-shimmer mb-1.5" />
-              <div className="h-3 w-3/5 rounded bg-[#2a2a2a] animate-shimmer" />
+            <div key={i} className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]">
+              <div className="aspect-[2/3] rounded-[var(--radius-md)] skeleton mb-2" />
+              <div className="h-3 rounded skeleton w-full mb-1.5" />
+              <div className="h-3 w-3/5 rounded skeleton" />
             </div>
           ))}
         </div>
-          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
         </div>
       ) : grid ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 px-4 sm:px-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 px-4 sm:px-10">
           {groups.map((group, i) => (
-            <ShowCard key={group.displayName + i} group={group} onWatch={onWatch} />
+            <ShowCard key={group.displayName + i} group={group} />
           ))}
         </div>
       ) : (
         <div className="relative">
           <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
           {groups.map((group, i) => (
-            <ShowCard key={group.displayName + i} group={group} onWatch={onWatch} />
+            <ShowCard key={group.displayName + i} group={group} />
           ))}
         </div>
-          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
         </div>
       )}
     </section>

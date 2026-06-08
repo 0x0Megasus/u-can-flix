@@ -1,12 +1,13 @@
 'use client';
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { fetchBestContent, fetchContent } from '@/_lib/api'
 import { getCleanTitle, getCategoryIds, detectType, groupByShow, pickBiggestSeason } from '@/_lib/utils'
 import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
 import ContentCard from './ContentCard'
 import ShowCard from './ShowCard'
+import ScrollArrows from './ScrollArrows'
 
-export default function TopRatedRow({ title, type, filter, onWatch, items: externalItems, limit }) {
+export default function TopRatedRow({ title, type, filter, items: externalItems, limit }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const { containerRef, showArrows, scroll } = useHorizontalScroll([items])
@@ -29,14 +30,15 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
 
         let combined = [...(Array.isArray(bestData) ? bestData : [])];
 
-        if (combined.length < (limit || 10) && Array.isArray(fallbackData)) {
+        const isShowType = filter === 'tv' || filter === 'anime';
+        if ((isShowType || combined.length < (limit || 10)) && Array.isArray(fallbackData)) {
           const seenIds = new Set(combined.map(i => i.id));
           const fill = fallbackData.filter(i => !seenIds.has(i.id));
           combined = [...combined, ...fill];
         }
 
         if (!cancelled) {
-          let finalData = combined.slice(0, limit || 10)
+          let finalData = combined
 
           if (filter === 'anime') {
             finalData = finalData.filter(item => {
@@ -55,15 +57,23 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
             })
           }
 
-          const hasImdb = finalData.some(i => i.imdbTitle)
-          if (!hasImdb && (filter === 'tv' || filter === 'anime') && finalData.length > 0) {
+          if (filter === 'tv' || filter === 'anime') {
             const groups = groupByShow(finalData)
             finalData = groups.map(g => {
-              const season = pickBiggestSeason(g)
-              const rep = season.representative || g.posts?.[0]
-              if (!rep) return null
-              return { ...rep, seasonNum: season.seasonNum || 1, displayName: g.displayName }
+              if (!g.posts?.length) return null
+              return {
+                _isShowGroup: true,
+                displayName: g.displayName,
+                seasons: g.seasons,
+                posts: g.posts,
+                representative: g.representative || g.posts[0],
+                hasRealSeasons: g.hasRealSeasons,
+                imdbRating: g.imdbRating,
+              }
             }).filter(Boolean)
+            if (limit) finalData = finalData.slice(0, limit)
+          } else {
+            finalData = finalData.slice(0, limit || 10)
           }
 
           setItems(finalData)
@@ -82,64 +92,52 @@ export default function TopRatedRow({ title, type, filter, onWatch, items: exter
   const displayLoading = loading && !externalItems
 
   return (
-    <section className="mb-8">
-      <div className="flex items-center justify-between mb-4 px-4 sm:px-10">
-        <h2 className="text-xl font-bold text-white">{title}</h2>
-        {showArrows && (
-          <div className="flex gap-2">
-            <button onClick={() => scroll('left')} aria-label="Scroll left"
-              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15,18 9,12 15,6" /></svg>
-            </button>
-            <button onClick={() => scroll('right')} aria-label="Scroll right"
-              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center border border-white/10 cursor-pointer text-white transition-all duration-200 hover:scale-110"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9,18 15,12 9,6" /></svg>
-            </button>
-          </div>
-        )}
+    <section className="mb-10">
+      <div className="flex items-center justify-between mb-5 px-4 sm:px-10">
+        <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] tracking-tight">{title}</h2>
+        {showArrows && <ScrollArrows onScroll={scroll} />}
       </div>
       {displayLoading ? (
         <div className="relative">
           <div className="flex gap-3 px-4 sm:px-10 overflow-hidden">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-[160px] sm:w-[200px] md:w-[250px] lg:w-[280px]">
-              <div className="aspect-[2/3] rounded bg-[#2a2a2a] animate-shimmer mb-2" />
-              <div className="h-3 rounded bg-[#2a2a2a] animate-shimmer mb-1.5" />
-              <div className="h-3 w-3/5 rounded bg-[#2a2a2a] animate-shimmer" />
+            <div key={i} className="flex-shrink-0 w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]">
+              <div className="aspect-[2/3] rounded-[var(--radius-md)] skeleton mb-2" />
+              <div className="h-3 rounded skeleton w-full mb-1.5" />
+              <div className="h-3 w-3/5 rounded skeleton" />
             </div>
           ))}
         </div>
-          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
         </div>
       ) : displayItems.length === 0 ? (
-        <p className="px-4 sm:px-10 text-[#808080]">No content available</p>
+        <p className="px-4 sm:px-10 text-[var(--text-muted)] text-sm">No content available</p>
       ) : (
         <div className="relative">
           <div ref={containerRef} className="flex gap-3 px-4 sm:px-10 overflow-x-auto scrollbar-hide pb-2">
           {displayItems.map((item, i) => {
-            const itemType = detectType(item)
-            const isShow = itemType === 'TV Show' || itemType === 'Anime'
             const key = item.id ? `rated-${item.id}` : `rated-idx-${i}`
 
-            if (isShow) {
-              const displayName = item.imdbTitle || getCleanTitle(item)
-              const sNum = item.seasonNum || 1
+            if (item._isShowGroup) {
+              return <ShowCard key={key} group={item} />
+            }
+            const itemType = detectType(item)
+            if (itemType === 'TV Show' || itemType === 'Anime') {
+              const cleanTitle = getCleanTitle(item)
               const group = {
-                displayName,
+                displayName: item.imdbTitle || cleanTitle,
                 representative: item,
                 posts: [item],
-                seasons: { [sNum]: [item] }
+                seasons: { [1]: [item] },
               }
-              return <ShowCard key={key} group={group} onWatch={onWatch} />
+              return <ShowCard key={key} group={group} />
             }
-            return <ContentCard key={key} item={item} onWatch={onWatch} />
+            return <ContentCard key={key} item={item} />
           })}
         </div>
-          <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#141414] to-transparent pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#141414] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[var(--bg-primary)] to-transparent pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[var(--bg-primary)] to-transparent pointer-events-none" />
         </div>
       )}
     </section>

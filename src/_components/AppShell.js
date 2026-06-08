@@ -1,16 +1,19 @@
 'use client';
+import { usePathname } from 'next/navigation'
 import Navbar from './Navbar'
 import Footer from './Footer'
-import { PlayerProvider } from './PlayerProvider'
 
 export default function AppShell({ children }) {
+  const pathname = usePathname()
+  const isWatchPage = pathname?.startsWith('/watch/')
+
   return (
-    <PlayerProvider>
-      <Navbar />
-      <main className="min-h-screen lg:px-[200px]">
+    <div className="relative min-h-screen flex flex-col">
+      {!isWatchPage && <Navbar />}
+      <main className="flex-1">
         {children}
       </main>
-      <Footer />
-    </PlayerProvider>
+      {!isWatchPage && <Footer />}
+    </div>
   )
 }

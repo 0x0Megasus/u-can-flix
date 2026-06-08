@@ -27,61 +27,67 @@ export default function Navbar() {
   }
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#141414] ${
-      scrolled ? 'shadow-lg shadow-black/20' : ''
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      scrolled
+        ? 'glass-nav shadow-[0_1px_0_var(--border-subtle)]'
+        : 'bg-transparent max-lg:bg-gradient-to-b max-lg:from-black/40 max-lg:to-transparent'
     }`}>
       <div className="max-w-[1440px] mx-auto">
-        <div className="flex items-center justify-between px-4 sm:px-10 lg:px-[200px] h-[60px] gap-3">
+        <div className="flex items-center justify-between px-4 sm:px-10 lg:px-[200px] h-[64px] gap-3">
           <button
             type="button"
-            className="text-[#e50914] text-xl sm:text-2xl font-black tracking-wider cursor-pointer select-none bg-transparent border-none p-0 whitespace-nowrap shrink-0"
+            className="text-[var(--accent)] text-xl sm:text-2xl font-black tracking-[0.08em] cursor-pointer select-none bg-transparent border-none p-0 whitespace-nowrap shrink-0 transition-transform duration-300 hover:scale-[1.02]"
             onClick={() => router.push('/')}
           >
             U CAN FLIX
           </button>
 
-          <div className="hidden md:flex items-center gap-5 flex-1 ml-6">
+          <div className="hidden md:flex items-center gap-6 flex-1 ml-8">
             {NAVS.map(({ path, label }) => (
               <button
                 type="button"
                 key={path}
                 onClick={() => router.push(path)}
-                className={`relative text-sm font-medium transition-colors duration-200 cursor-pointer bg-transparent border-none p-0 ${
-                  isActive(path) ? 'text-white font-bold' : 'text-[#b3b3b3] hover:text-white'
+                className={`relative text-sm font-medium transition-all duration-300 cursor-pointer bg-transparent border-none p-0 py-1 ${
+                  isActive(path)
+                    ? 'text-[var(--text-primary)]'
+                    : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 {label}
-                {isActive(path) && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-[#e50914] rounded-full" />}
+                {isActive(path) && (
+                  <span className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-[var(--accent)] rounded-full" />
+                )}
               </button>
             ))}
           </div>
 
-          <div className="flex items-center shrink-0">
+          <div className="flex items-center shrink-0 gap-2">
             {!isSearch && (
               <button onClick={handleSearchClick} aria-label="Search"
-                className="flex items-center gap-2 text-[#b3b3b3] hover:text-white hover:border-white transition-all duration-200 bg-transparent border border-white/20 cursor-pointer text-sm rounded-full px-3 sm:px-5 py-2 min-w-[100px] sm:min-w-0 justify-center"
+                className="flex items-center gap-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-all duration-300 bg-transparent border border-[var(--border-default)] cursor-pointer text-sm rounded-full px-4 py-2 justify-center group"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="transition-transform duration-300 group-hover:scale-110">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                <span className="hidden sm:inline">Search</span>
+                <span className="hidden sm:inline text-xs font-medium tracking-wide uppercase">Search</span>
               </button>
             )}
           </div>
         </div>
 
-        <div className="md:hidden overflow-x-auto pb-3 px-4 sm:px-10 lg:px-[200px]" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="md:hidden overflow-x-auto pb-3 px-4 sm:px-10 lg:px-[200px] scrollbar-hide">
           <div className="flex gap-2">
             {NAVS.map(({ path, label }) => (
               <button
                 type="button"
                 key={path}
                 onClick={() => router.push(path)}
-                className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200 cursor-pointer border-none shrink-0 ${
+                className={`whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 cursor-pointer border-none shrink-0 ${
                   isActive(path)
-                    ? 'bg-[#e50914] text-white shadow-md shadow-red-800/40'
-                    : 'bg-white/10 text-[#b3b3b3] hover:bg-white/20 hover:text-white'
+                    ? 'bg-[var(--accent)] text-white shadow-lg shadow-[var(--accent-glow)]'
+                    : 'bg-[var(--bg-tertiary)] text-[var(--text-tertiary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 {label}

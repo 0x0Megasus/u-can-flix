@@ -67,23 +67,27 @@ export default function PlayerModal({ item, onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center animate-fadeIn">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="player-modal-title"
-        className="relative w-full max-w-4xl mx-4 animate-scaleIn border border-white/5 rounded-lg shadow-2xl"
+        className="relative w-full max-w-4xl mx-4 animate-scaleIn glass-modal rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-elevated)]"
       >
-        <div className="flex items-center justify-between p-4 bg-[#0a0a0a] rounded-t">
-          <h2 id="player-modal-title" className="text-lg font-bold text-white truncate mr-4">{title}</h2>
-          <button ref={closeRef} onClick={onClose} aria-label="Close player" className="text-[#808080] hover:text-white text-xl bg-transparent border-none cursor-pointer">✕</button>
+        <div className="flex items-center justify-between p-4 bg-[var(--bg-primary)] border-b border-[var(--border-default)]">
+          <h2 id="player-modal-title" className="text-lg font-bold text-[var(--text-primary)] truncate mr-4">{title}</h2>
+          <button ref={closeRef} onClick={onClose} aria-label="Close player"
+            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xl bg-transparent border-none cursor-pointer transition-colors duration-300"
+          >
+            ✕
+          </button>
         </div>
         <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
           {!loaded && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black">
-              <div className="w-10 h-10 border-4 border-[#e50914] border-t-transparent rounded-full animate-spin" />
-              <span className="text-[#808080] text-sm">Loading player...</span>
+              <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+              <span className="text-[var(--text-muted)] text-sm">Loading player...</span>
             </div>
           )}
           <iframe
@@ -99,12 +103,17 @@ export default function PlayerModal({ item, onClose }) {
           />
         </div>
         {!dismissed && (
-          <div className={`p-3 bg-[#0a0a0a] rounded-b text-center border-t border-white/5 ${hiding ? 'animate-hintOut' : 'animate-hintIn'}`}
-            style={hiding ? { animation: 'hintOut 0.2s forwards' } : { animation: 'hintIn 0.3s' }}>
-            <span className="text-[#b3b3b3] text-sm">
-              Use <strong className="text-white">full screen mode</strong> to hide external ads if you are seeing them.
+          <div className={`p-3 bg-[var(--bg-primary)] border-t border-[var(--border-default)] text-center ${
+            hiding ? 'animate-hintOut' : 'animate-hintIn'
+          }`}>
+            <span className="text-[var(--text-tertiary)] text-sm">
+              Use <strong className="text-[var(--text-primary)]">full screen mode</strong> to hide external ads if you are seeing them.
             </span>
-            <button onClick={handleDismiss} aria-label="Dismiss hint" className="ml-3 text-[#808080] hover:text-white bg-transparent border-none cursor-pointer">✕</button>
+            <button onClick={handleDismiss} aria-label="Dismiss hint"
+              className="ml-3 text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-transparent border-none cursor-pointer transition-colors"
+            >
+              ✕
+            </button>
           </div>
         )}
       </div>

@@ -65,7 +65,7 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className="min-h-full bg-[#141414] text-white font-['Cairo',Arial,Helvetica,sans-serif] antialiased">
+      <body className="min-h-full text-[var(--text-primary)] font-['Cairo',Arial,Helvetica,sans-serif] antialiased">
         <AppShell>{children}</AppShell>
       </body>
     </html>

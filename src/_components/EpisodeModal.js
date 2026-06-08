@@ -79,49 +79,53 @@ export default function EpisodeModal({ group, loading, onClose, onWatch }) {
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center animate-fadeIn">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleBackdrop} />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={handleBackdrop} />
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="episode-modal-title"
-        className="relative w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col animate-scaleIn bg-[#0a0a0a] border border-white/5 rounded-lg overflow-hidden shadow-2xl"
+        className="relative w-full max-w-2xl mx-4 max-h-[85vh] flex flex-col animate-scaleIn glass-modal rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-elevated)]"
       >
-        <div className="flex items-start justify-between p-5 border-b border-[#333]">
+        <div className="flex items-start justify-between p-5 border-b border-[var(--border-default)]">
           <div className="flex-1 min-w-0">
-            <h2 id="episode-modal-title" className="text-xl font-bold text-white truncate">{displayName}</h2>
+            <h2 id="episode-modal-title" className="text-xl font-bold text-[var(--text-primary)] truncate">{displayName}</h2>
             <div className="flex gap-1 mt-2 flex-wrap">
               {rating && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f5c518] text-black font-bold">★ {rating}</span>}
-              {genres.map(g => (
-                <span key={g} className="text-[10px] px-1.5 py-0.5 rounded bg-[#333] text-[#b3b3b3]">{g}</span>
+              {genres.slice(0, 3).map(g => (
+                <span key={g} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-tertiary)] text-[var(--text-tertiary)]">{g}</span>
               ))}
             </div>
           </div>
-          <button ref={closeRef} onClick={onClose} aria-label="Close episodes" className="text-[#808080] hover:text-white text-xl bg-transparent border-none cursor-pointer ml-4">✕</button>
+          <button ref={closeRef} onClick={onClose} aria-label="Close episodes"
+            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xl bg-transparent border-none cursor-pointer ml-4 transition-colors duration-300"
+          >
+            ✕
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-5">
           {loading ? (
             <div className="flex flex-col items-center gap-4 py-8">
-              <div className="flex items-center gap-2 text-[#b3b3b3]">
-                <div className="w-5 h-5 border-2 border-[#e50914] border-t-transparent rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-[var(--text-tertiary)]">
+                <div className="w-5 h-5 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
                 <span className="text-sm">Loading seasons & episodes...</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="p-4 rounded bg-[#222]">
-                    <div className="h-6 w-12 bg-[#333] rounded animate-shimmer mb-2" />
-                    <div className="h-4 w-20 bg-[#333] rounded animate-shimmer" />
+                  <div key={i} className="p-4 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)]">
+                    <div className="h-6 w-12 skeleton mb-2" />
+                    <div className="h-4 w-20 skeleton" />
                   </div>
                 ))}
               </div>
             </div>
           ) : seasons.length === 0 ? (
-            <p className="text-[#808080] text-center py-8">No seasons found</p>
+            <p className="text-[var(--text-tertiary)] text-center py-8">No seasons found</p>
           ) : !selectedSeason ? (
             <>
               {seasons.length > 1 && (
-                <p className="text-[#808080] text-sm mb-4">Select a season to browse episodes</p>
+                <p className="text-[var(--text-muted)] text-sm mb-4">Select a season to browse episodes</p>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {seasons.map(s => (
@@ -129,19 +133,19 @@ export default function EpisodeModal({ group, loading, onClose, onWatch }) {
                     role="button"
                     tabIndex={0}
                     aria-label={`Browse season ${s.seasonNum}`}
-                    className="p-4 rounded bg-[#333] hover:bg-[#444] cursor-pointer transition-colors text-center"
+                    className="p-4 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] hover:bg-[var(--bg-elevated)] cursor-pointer transition-all duration-300 text-center border border-transparent hover:border-[var(--border-default)]"
                     onClick={() => setSelectedSeason(s.seasonNum)}
                     onKeyDown={activateOnKey(() => setSelectedSeason(s.seasonNum))}
                   >
-                    <div className="text-2xl font-bold text-white">S{s.seasonNum}</div>
-                    <div className="text-sm text-[#b3b3b3] mt-1">
+                    <div className="text-2xl font-bold text-[var(--text-primary)]">S{s.seasonNum}</div>
+                    <div className="text-sm text-[var(--text-tertiary)] mt-1">
                       {s.episodes.length > 1
                         ? `EP ${s.episodes[0].episode || 1}-${s.episodes[s.episodes.length - 1].episode || s.episodes.length}`
                         : `EP ${s.episodes[0].episode || 1}`}
                     </div>
-                    <button className="mt-3 px-4 py-1.5 rounded bg-[#e50914] text-white text-xs font-bold border-none cursor-pointer hover:bg-[#f40612] transition-colors">
+                    <div className="mt-3 px-4 py-1.5 rounded-full bg-[var(--accent)] text-white text-xs font-bold border-none cursor-pointer hover:bg-[var(--accent-hover)] transition-all duration-300">
                       Browse
-                    </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -149,53 +153,53 @@ export default function EpisodeModal({ group, loading, onClose, onWatch }) {
           ) : activeSeason ? (
             <>
               <button onClick={handleBack}
-                className="flex items-center gap-1 text-[#b3b3b3] hover:text-white transition-colors bg-transparent border-none cursor-pointer text-sm mb-4"
+                className="flex items-center gap-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors duration-300 bg-transparent border-none cursor-pointer text-sm mb-4"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="15,18 9,12 15,6" />
                 </svg>
                 All Seasons
               </button>
-              <h3 className="text-lg font-bold text-white mb-4">
+              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-4">
                 Season {activeSeason.seasonNum}
-                <span className="text-sm text-[#808080] font-normal ml-2">{activeSeason.episodes.length} episodes</span>
+                <span className="text-sm text-[var(--text-muted)] font-normal ml-2">{activeSeason.episodes.length} episodes</span>
               </h3>
-              {activeSeason.episodes.map((ep, i) => (
-                (() => {
-                  const image = getFeaturedImage(ep, 'medium')
-                  const title = stripArabic(ep.title?.rendered || `Episode ${ep.episode || i + 1}`)
-                  return (
+              <div className="space-y-2">
+              {activeSeason.episodes.map((ep, i) => {
+                const image = getFeaturedImage(ep, 'medium')
+                const title = stripArabic(ep.title?.rendered || `Episode ${ep.episode || i + 1}`)
+                return (
                 <div key={ep.id || i}
                   role="button"
                   tabIndex={0}
                   aria-label={`Play ${title}`}
-                  className="flex items-center gap-3 p-3 rounded hover:bg-[#333] cursor-pointer transition-colors mb-2"
+                  className="flex items-center gap-3 p-3 rounded-[var(--radius-md)] hover:bg-[var(--bg-tertiary)] cursor-pointer transition-all duration-300 border border-transparent hover:border-[var(--border-subtle)]"
                   onClick={() => onWatch(ep)}
                   onKeyDown={activateOnKey(() => onWatch(ep))}
                 >
-                  <span className="text-sm font-bold text-[#b3b3b3] w-12 flex-shrink-0">EP {ep.episode || i + 1}</span>
-                  <div className="w-24 h-14 flex-shrink-0 rounded overflow-hidden bg-[#333]">
+                  <span className="text-sm font-bold text-[var(--text-muted)] w-12 flex-shrink-0">EP {ep.episode || i + 1}</span>
+                  <div className="w-24 h-14 flex-shrink-0 rounded-[var(--radius-sm)] overflow-hidden bg-[var(--bg-tertiary)]">
                     {image ? (
                       <Image src={image} alt={title} width={96} height={56} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-[#333]" />
+                      <div className="w-full h-full bg-[var(--bg-tertiary)]" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm text-white truncate">{title}</div>
+                    <div className="text-sm text-[var(--text-primary)] truncate">{title}</div>
                   </div>
-                  <button onClick={(e) => { e.stopPropagation(); onWatch(ep); }}
-                    className="px-3 py-1.5 rounded bg-[#e50914] text-white text-xs font-bold flex items-center gap-1 border-none cursor-pointer hover:bg-[#f40612] transition-colors flex-shrink-0"
+                  <div onClick={(e) => { e.stopPropagation(); onWatch(ep); }}
+                    className="px-3 py-1.5 rounded-full bg-[var(--accent)] text-white text-xs font-bold flex items-center gap-1 border-none cursor-pointer hover:bg-[var(--accent-hover)] transition-all duration-300 flex-shrink-0"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                       <polygon points="5,3 19,12 5,21" />
                     </svg>
                     Play
-                  </button>
+                  </div>
                 </div>
-                  )
-                })()
-              ))}
+                )
+              })}
+              </div>
             </>
           ) : null}
         </div>
