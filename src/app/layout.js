@@ -41,6 +41,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="h-full">
       <head>
         <script src="https://quge5.com/88/tag.min.js" data-zone="248494" async data-cfasync="false"></script>
+        <script>(function(s){s.dataset.zone='11133077',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
