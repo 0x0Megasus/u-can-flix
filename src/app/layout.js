@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'UCanFlix';
 
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{__html: "(function(){var s=[document.documentElement,document.body].filter(Boolean).pop().appendChild(document.createElement('script'));s.dataset.zone='11133077';s.src='https://nap5k.com/tag.min.js';})();"}} />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
