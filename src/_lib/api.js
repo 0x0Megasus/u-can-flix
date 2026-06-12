@@ -118,11 +118,12 @@ export async function fetchShowEpisodes(showName, categoryIds) {
   if (cached) return cached;
 
   const showLower = showName.toLowerCase().trim();
+  const searchTerm = showName.replace(/[^a-zA-Z0-9\s\u0600-\u06FF]/g, ' ').replace(/\s+/g, ' ').trim();
   const params = new URLSearchParams();
   params.set('per_page', '100');
   params.set('_embed', '');
   params.set('page', '1');
-  params.set('search', showName);
+  params.set('search', searchTerm);
   if (categoryIds) params.set('categories', categoryIds);
 
   const url = `/api/wp/v2/posts?${params.toString()}`;
@@ -165,7 +166,15 @@ export async function fetchShowEpisodes(showName, categoryIds) {
   }
 
   const matchedPosts = allPosts.filter(post => {
-    const title = (post.title?.rendered || '').toLowerCase().trim();
+    const raw = (post.title?.rendered || '').toLowerCase().trim();
+    const title = raw
+      .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(d))
+      .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)))
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
     return title.includes(showLower) ||
            (showLower.includes(title.length > 3 ? title : '____NOT_MATCH____'));
   });

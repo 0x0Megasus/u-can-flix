@@ -179,7 +179,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
                 <div className="h-4 skeleton rounded w-3/5" />
               </div>
             ) : overview ? (
-              <p className="text-sm md:text-base text-[var(--text-secondary)] mb-6 max-w-xl leading-relaxed">
+              <p className="text-sm md:text-base text-[var(--text-secondary)] mb-6 max-w-xl leading-relaxed line-clamp-3 md:line-clamp-4">
                 {overview}
               </p>
             ) : null}

@@ -135,8 +135,8 @@ export function parseEpisode(title) {
 
   t = t.replace(/^(\u0645\u0633\u0644\u0633\u0644|\u0627\u0646\u0645\u064a|series|anime|\u0641\u064a\u0644\u0645|movie)\s+/i, '').trim()
 
-  t = t.replace(/\d{3,4}p(?:\s*(?:WEB-DL|BluRay|WEBRip|HDRip|DVD|BRRip|HDTV|WEB|CAM|TS|TC))?/gi, '').trim()
-  t = t.replace(/(?:WEB-DL|BluRay|WEBRip|HDRip|DVD|BRRip|HDTV|WEB|CAM|TS|TC)\s*\d*p?/gi, '').trim()
+  t = t.replace(/\d{3,4}p(?:\s*(?:WEB-DL|BluRay|WEBRip|HDRip|DVD|BRRip|HDTV|\bWEB\b|\bCAM\b|\bTS\b|\bTC\b))?/gi, '').trim()
+  t = t.replace(/(?:WEB-DL|BluRay|WEBRip|HDRip|DVD|BRRip|HDTV|\bWEB\b|\bCAM\b|\bTS\b|\bTC\b)\s*\d*p?/gi, '').trim()
 
   t = t.replace(/\s*\u0645\u062a\u0631\u062c\u0645\s*\u0627\u0648\u0646\s*\u0644\u0627\u064a\u0646\s*/gi, ' ').trim()
   t = t.replace(/\s*\u0645\u062a\u0631\u062c\u0645\u0629\s*/gi, ' ').trim()

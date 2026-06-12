@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { stripArabic, getFeaturedImage, detectType, groupByShow, extractGenres } from '@/_lib/utils'
+import { stripArabic, getFeaturedImage, detectType, groupByShow, extractGenres, parseEpisode } from '@/_lib/utils'
 import { fetchShowEpisodes } from '@/_lib/api'
 import { fetchDescription } from '@/_lib/description'
 
@@ -74,7 +74,11 @@ export default function WatchPage() {
 
   const isShow = watchData?.isShow || watchData?.type === 'TV Show' || watchData?.type === 'Anime'
   const item = watchData?.item || watchData
-  const showName = watchData?.displayName || (item ? stripArabic(item.title?.rendered || '') : '')
+  const showName = watchData?.displayName || (() => {
+    const raw = stripArabic(item?.title?.rendered || '')
+    const { name } = parseEpisode(raw)
+    return name || raw || ''
+  })()
   const showType = watchData?.type || (item ? detectType(item) : '')
   const showTypeColor = showType === 'Anime' ? '#7c3aed' : '#2563eb'
   const catIds = showType === 'Anime' ? '5,8' : '7,9'
@@ -292,9 +296,15 @@ export default function WatchPage() {
               ))}
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--text-primary)] tracking-tight">{showName}</h1>
-            <p className="text-[var(--text-muted)] text-sm mt-2">
-              {seasons.reduce((sum, s) => sum + s.episodes.length, 0)} episodes across {seasons.length} season{seasons.length > 1 ? 's' : ''}
-            </p>
+            {fetchingEpisodes && seasons.length === 0 ? (
+              <p className="text-[var(--text-muted)] text-sm mt-2">
+                <span className="skeleton inline-block rounded h-4 w-48 align-middle" />
+              </p>
+            ) : (
+              <p className="text-[var(--text-muted)] text-sm mt-2">
+                {seasons.reduce((sum, s) => sum + s.episodes.length, 0)} episodes across {seasons.length} season{seasons.length > 1 ? 's' : ''}
+              </p>
+            )}
             {descLoading ? (
               <div className="mt-4 max-w-2xl space-y-2">
                 <div className="h-3 skeleton rounded w-full" />

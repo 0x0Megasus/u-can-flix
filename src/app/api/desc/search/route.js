@@ -1,8 +1,19 @@
 const DISC_CACHE = new Map()
 const DISC_TTL = 60 * 60 * 1000
 
+function decodeEntities(str) {
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(d))
+}
+
 function stripHtml(html) {
-  return html ? html.replace(/<[^>]+>/g, '').trim() : ''
+  if (!html) return ''
+  return decodeEntities(html.replace(/<[^>]+>/g, '').trim())
 }
 
 function isAnime(type) {

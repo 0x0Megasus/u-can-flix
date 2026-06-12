@@ -40,8 +40,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
-        {/* <script src="https://quge5.com/88/tag.min.js" data-zone="248494" async data-cfasync="false"></script> */}
-        <script src="https://quge5.com/88/tag.min.js" data-zone="11129891" async data-cfasync="false"></script>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="248494" async data-cfasync="false"></script>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
