@@ -5,6 +5,7 @@ import HeroBanner from '@/_components/HeroBanner'
 import ContentCard from '@/_components/ContentCard'
 import ShowCard from '@/_components/ShowCard'
 import TopRatedRow from '@/_components/TopRatedRow'
+import AdContainer from '@/_components/AdContainer'
 import LoadingSkeleton from '@/_components/LoadingSkeleton'
 import ScrollArrows from '@/_components/ScrollArrows'
 import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
@@ -166,6 +167,7 @@ export default function CategoryPage({ filter, label }) {
       
       <section className="pt-12">
         <TopRatedRow title={`Top ${catLabel}`} filter={filter} limit={10} />
+        <AdContainer />
 
         <div className="mb-10">
           <div className="flex items-center justify-between  mb-5">

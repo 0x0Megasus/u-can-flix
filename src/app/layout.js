@@ -1,5 +1,6 @@
 import "./globals.css";
 import AppShell from "@/_components/AppShell";
+import Script from "next/script";
 
 export async function generateMetadata() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ucanflix.com';
@@ -40,11 +41,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(s){s.dataset.zone='11133077',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`,
-          }}
-        />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -71,6 +67,14 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="min-h-full text-[var(--text-primary)] font-['Cairo',Arial,Helvetica,sans-serif] antialiased">
+        <Script
+          src="https://pl29766284.effectivecpmnetwork.com/11cbb31bef16680acc51393f8b8d5af9/invoke.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"
+          strategy="afterInteractive"
+        />
         <AppShell>{children}</AppShell>
       </body>
     </html>
