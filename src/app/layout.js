@@ -71,11 +71,10 @@ export default function RootLayout({ children }) {
           src="https://pl29766284.effectivecpmnetwork.com/11cbb31bef16680acc51393f8b8d5af9/invoke.js"
           strategy="afterInteractive"
         />
-        <script src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"></script>
-        {/* <Script
+        <Script
           src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"
           strategy="afterInteractive"
-        /> */}
+        />
         <AppShell>{children}</AppShell>
       </body>
     </html>
