@@ -12,7 +12,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
   const router = useRouter()
   const [imgError, setImgError] = useState(false)
   const [tmdbData, setTmdbData] = useState(null)
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(true)
   const [descLoading, setDescLoading] = useState(false)
 
   useEffect(() => {
@@ -148,19 +148,19 @@ export default function HeroBanner({ item, onWatch, loading }) {
           style={{ animation: 'fadeInUp 0.8s var(--ease-out-expo)' }}
         >
           <div className="max-w-2xl">
-            <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <div className="flex items-center gap-3 mb-5 flex-wrap">
               <span
-                className="inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.1em] shadow-lg"
+                className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] shadow-lg"
                 style={{ background: typeColor, color: '#fff' }}
               >
                 {type === 'Anime Movie' ? 'Anime' : type}
               </span>
               {year && (
-                <span className="text-sm text-[var(--text-secondary)] font-medium">{year}</span>
+                <span className="text-sm text-[var(--text-secondary)] font-medium tracking-wide">{year}</span>
               )}
               {rating && (
                 <span className="flex items-center gap-1.5 text-sm text-[#f5c518] font-bold">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
                   </svg>
                   {rating.toFixed(1)}
@@ -168,7 +168,9 @@ export default function HeroBanner({ item, onWatch, loading }) {
               )}
             </div>
 
-            <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-white drop-shadow-2xl mb-4 leading-[1.1] tracking-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-display font-bold text-white leading-[1.05] tracking-[-0.04em] mb-5 drop-shadow-2xl"
+              style={{ textShadow: '0 2px 40px rgba(0,0,0,0.5)' }}
+            >
               {title}
             </h1>
 
@@ -179,7 +181,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
                 <div className="h-4 skeleton rounded w-3/5" />
               </div>
             ) : overview ? (
-              <p className="text-sm md:text-base text-[var(--text-secondary)] mb-6 max-w-xl leading-relaxed line-clamp-3 md:line-clamp-4">
+              <p className="text-sm md:text-base text-[var(--text-secondary)] mb-6 max-w-xl leading-relaxed line-clamp-3 md:line-clamp-4 tracking-wide">
                 {overview}
               </p>
             ) : null}
@@ -188,7 +190,12 @@ export default function HeroBanner({ item, onWatch, loading }) {
               <div className="flex flex-wrap gap-2 mb-6">
                 {genres.slice(0, 4).map(g => (
                   <span key={typeof g === 'string' ? g : g.id || g.name}
-                    className="px-3 py-1 rounded-full text-xs font-medium glass-card text-[var(--text-secondary)]"
+                    className="px-3.5 py-1 rounded-full text-[11px] font-semibold tracking-wide text-[var(--text-secondary)]"
+                    style={{
+                      background: 'rgba(255,255,255,0.08)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                    }}
                   >
                     {typeof g === 'string' ? g : g.name}
                   </span>
@@ -199,9 +206,12 @@ export default function HeroBanner({ item, onWatch, loading }) {
             <div className="flex items-center gap-3">
               <button
                 onClick={handlePlay}
-                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-bold text-lg transition-all duration-300 border-none cursor-pointer hover:scale-105 active:scale-95 shadow-lg shadow-[var(--accent-glow)]"
+                className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-white text-black font-bold text-base transition-all duration-300 border-none cursor-pointer hover:scale-105 active:scale-95 shadow-2xl"
+                style={{
+                  boxShadow: '0 4px 24px rgba(255,255,255,0.15), 0 0 40px rgba(255,255,255,0.05)',
+                }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <polygon points="5,3 19,12 5,21" />
                 </svg>
                 {isShowType ? 'Browse Episodes' : 'Play Now'}
@@ -210,9 +220,14 @@ export default function HeroBanner({ item, onWatch, loading }) {
               {isShowType && (
                 <button
                   onClick={() => handlePlay(true)}
-                  className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full glass-card text-white font-semibold text-base transition-all duration-300 border border-[var(--border-default)] cursor-pointer hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)]"
+                  className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full text-white font-semibold text-sm transition-all duration-300 border cursor-pointer hover:bg-white/10 hover:scale-105 active:scale-95"
+                  style={{
+                    background: 'rgba(255,255,255,0.06)',
+                    backdropFilter: 'blur(12px)',
+                    borderColor: 'rgba(255,255,255,0.12)',
+                  }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                     <polygon points="5,3 19,12 5,21" />
                   </svg>
                   Quick Play

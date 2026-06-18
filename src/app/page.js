@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import HeroBanner from '@/_components/HeroBanner'
 import TopRatedRow from '@/_components/TopRatedRow'
-import AdContainer from '@/_components/AdContainer'
 import { fetchContent, fetchBestContent } from '@/_lib/api'
 import { getCategoryIds } from '@/_lib/utils'
 
@@ -90,7 +89,6 @@ export default function HomePage() {
       <section className="pt-12">
         <TopRatedRow title="Top Movies" filter="movies" limit={10} />
         <TopRatedRow title="TV Shows" filter="tv" limit={10} />
-        <AdContainer />
         <TopRatedRow title="Anime" filter="anime" limit={10} />
       </section>
 

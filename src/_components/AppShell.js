@@ -1,19 +1,23 @@
 'use client';
 import { usePathname } from 'next/navigation'
-import Navbar from './Navbar'
 import Footer from './Footer'
+import AdContainer from './AdContainer'
+import BottomNav from './BottomNav'
 
 export default function AppShell({ children }) {
   const pathname = usePathname()
   const isWatchPage = pathname?.startsWith('/watch/')
+  const isSearchPage = pathname?.startsWith('/search')
+  const hideAds = isWatchPage || isSearchPage
 
   return (
     <div className="relative min-h-screen flex flex-col">
-      {!isWatchPage && <Navbar />}
-      <main className="flex-1 px-4 sm:px-10 lg:px-[200px]">
+      <main className="flex-1 px-4 sm:px-10 lg:px-[200px] pb-[80px] md:pb-0">
         {children}
       </main>
+      {!hideAds && <AdContainer />}
       {!isWatchPage && <Footer />}
+      <BottomNav />
     </div>
   )
 }

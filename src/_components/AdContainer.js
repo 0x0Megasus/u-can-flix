@@ -1,6 +1,6 @@
 export default function AdContainer() {
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-1 sm:px-6 lg:px-[200px] my-2 sm:my-4">
+    <section className="my-2 sm:my-4 px-4 sm:px-10 lg:px-[200px]">
       <div className="rounded-md sm:rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)]/50 overflow-hidden">
         <div className="flex items-center justify-between px-1.5 py-0.5 sm:px-3 sm:py-1 border-b border-[var(--border-subtle)]">
           <span className="text-[7px] sm:text-[9px] font-bold uppercase tracking-[0.15em] text-[var(--text-muted)]">
