@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import Footer from './Footer'
 import BottomNav from './BottomNav'
+import LoadingBar from './LoadingBar'
 
 export default function AppShell({ children }) {
   const pathname = usePathname()
@@ -9,6 +10,7 @@ export default function AppShell({ children }) {
 
   return (
     <div className="relative min-h-screen flex flex-col">
+      <LoadingBar />
       <main className="flex-1 px-4 sm:px-10 lg:px-[200px] pb-[80px] md:pb-0">
         {children}
       </main>

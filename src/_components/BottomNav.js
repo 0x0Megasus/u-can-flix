@@ -56,7 +56,7 @@ export default function BottomNav() {
             <button
               key={label}
               type="button"
-              onClick={() => router.push(path)}
+              onClick={() => { window.dispatchEvent(new CustomEvent('nav:start')); router.push(path) }}
               aria-label={label}
               className="relative flex flex-col items-center justify-center gap-0.5 w-[56px] h-[52px] rounded-xl bg-transparent border-none cursor-pointer transition-all duration-300 group hover:-translate-y-0.5"
               style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
