@@ -11,6 +11,7 @@ function useCardImage(post) {
   const [src, setSrc] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const fetched = useRef(false)
+  const errorRetried = useRef(false)
 
   const wpSrc = getFeaturedImage(post, 'medium')
   const title = stripArabic(post?.title?.rendered || '')
@@ -22,6 +23,7 @@ function useCardImage(post) {
     setSrc(wpSrc || null)
     setLoaded(false)
     fetched.current = false
+    errorRetried.current = false
 
     if (!wpSrc && title && !fetched.current) {
       fetched.current = true
@@ -47,13 +49,17 @@ function useCardImage(post) {
   }, [wpSrc, title, cacheKey, isShowType])
 
   const handleError = () => {
-    if (fetched.current || !title) return
-    fetched.current = true
+    if (!title) return
+    if (errorRetried.current) return
+    errorRetried.current = true
+
+    const cached = CARD_TMDB_CACHE.get(cacheKey)
+    if (cached) { setSrc(cached); return }
+
     if (CARD_TMDB_CACHE.has(cacheKey)) {
-      const cached = CARD_TMDB_CACHE.get(cacheKey)
-      if (cached) setSrc(cached)
-      return
+      CARD_TMDB_CACHE.delete(cacheKey)
     }
+
     const searchType = isShowType ? 'tv' : 'movie'
     fetch(`/api/tmdb/search?q=${encodeURIComponent(title)}&type=${searchType}`)
       .then(r => r.json())
@@ -133,6 +139,7 @@ export default function ShowCard({ group }) {
               src={image}
               alt={title}
               fill
+              unoptimized
               sizes="(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 180px, 160px"
               onLoad={() => setImgLoaded(true)}
               onError={handleError}

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react'
 import { fetchBestContent, fetchContent } from '@/_lib/api'
-import { getCleanTitle, getCategoryIds, detectType, groupByShow, pickBiggestSeason } from '@/_lib/utils'
+import { getCleanTitle, getCategoryIds, detectType, groupByShow, pickBiggestSeason, stripYears } from '@/_lib/utils'
 import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
 import ContentCard from './ContentCard'
 import ShowCard from './ShowCard'
@@ -125,7 +125,7 @@ export default function TopRatedRow({ title, type, filter, items: externalItems,
             if (itemType === 'TV Show' || itemType === 'Anime') {
               const cleanTitle = getCleanTitle(item)
               const group = {
-                displayName: item.imdbTitle || cleanTitle,
+                displayName: stripYears(item.imdbTitle) || cleanTitle,
                 representative: item,
                 posts: [item],
                 seasons: { [1]: [item] },

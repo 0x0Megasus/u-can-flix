@@ -7,7 +7,7 @@ export default function Footer() {
   const [contactOpen, setContactOpen] = useState(false)
 
   return (
-    <footer className="border-t border-[var(--border-subtle)] py-10 px-4 sm:px-10 lg:px-[200px] mt-16">
+    <footer className="border-t border-[var(--border-subtle)] py-10 px-4 sm:px-10 lg:px-[200px] mt-16 pb-[90px]">
       <div className="max-w-[1440px] mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
           <div className="text-center md:text-left">

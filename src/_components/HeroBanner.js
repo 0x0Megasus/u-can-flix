@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getFeaturedImage, getCleanTitle, detectType, extractGenres } from '@/_lib/utils'
+import { getFeaturedImage, getCleanTitle, getSearchTitle, stripYears, detectType, extractGenres } from '@/_lib/utils'
 import { tmdbImage } from '@/_lib/tmdb'
 import { fetchDescription } from '@/_lib/description'
 
@@ -21,7 +21,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
     setDescLoading(false)
     if (!item) return
 
-    const title = getCleanTitle(item)
+    const title = getSearchTitle(item)
     if (!title) return
 
     const controller = new AbortController()
@@ -80,7 +80,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
 
   if (!item) return null
 
-  const title = item.imdbTitle || getCleanTitle(item)
+  const title = stripYears(item.imdbTitle) || getCleanTitle(item)
   const type = detectType(item)
   const isShowType = type === 'TV Show' || type === 'Anime'
 

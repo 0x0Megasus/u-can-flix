@@ -232,6 +232,28 @@ export function stripArabic(text) {
   return t
 }
 
+export function stripYears(str) {
+  return str ? str.replace(/\b(19\d{2}|20\d{2})\b/g, '').replace(/\s+/g, ' ').trim() : ''
+}
+
+export function getSearchTitle(item) {
+  const raw = item.title?.rendered || ''
+  if (!raw) return ''
+  let decoded = raw
+  if (typeof document !== 'undefined') {
+    const el = document.createElement('div')
+    el.innerHTML = raw
+    decoded = el.textContent || ''
+  }
+  return decoded
+    .replace(/\d{3,4}p(?:\s*(?:WEB-DL|BluRay|WEBRip|HDRip|DVD|BRRip|HDTV|WEB|CAM|TS|TC))?/gi, '')
+    .replace(/(?:WEB-DL|BluRay|WEBRip|HDRip|DVD|BRRip|HDTV|WEB|CAM|TS|TC)\s*\d*p?/gi, '')
+    .replace(/[\u0600-\u06FF]/g, '')
+    .replace(/\s*\(\)\s*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim() || 'Untitled'
+}
+
 export function getCleanTitle(item) {
   const raw = item.title?.rendered || ''
   if (!raw) return 'Untitled'
