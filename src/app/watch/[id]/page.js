@@ -222,6 +222,15 @@ export default function WatchPage() {
                 playsInline
                 sandbox="allow-scripts allow-same-origin allow-forms"
               />
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full text-[10px] font-medium pointer-events-none"
+                style={{
+                  background: 'rgba(0,0,0,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  color: 'rgba(255,255,255,0.5)',
+                }}
+              >
+                Ads are blocked &mdash; clicking them won&apos;t redirect
+              </div>
             </div>
           ) : (
             <p className="text-[var(--text-muted)]">No player available for this content</p>
@@ -259,16 +268,27 @@ export default function WatchPage() {
             </div>
           )}
           {activePlayerUrl ? (
-            <iframe
-              src={activePlayerUrl}
-              title={stripArabic(activeEpisode.title?.rendered || '')}
-              onLoad={() => setPlayerLoaded(true)}
-              className={`w-full h-full ${playerLoaded ? '' : 'invisible'}`}
-              allow="autoplay *; encrypted-media *; fullscreen *; picture-in-picture *"
-              allowFullScreen
-              playsInline
-              sandbox="allow-scripts allow-same-origin allow-forms"
-            />
+            <>
+              <iframe
+                src={activePlayerUrl}
+                title={stripArabic(activeEpisode.title?.rendered || '')}
+                onLoad={() => setPlayerLoaded(true)}
+                className={`w-full h-full ${playerLoaded ? '' : 'invisible'}`}
+                allow="autoplay *; encrypted-media *; fullscreen *; picture-in-picture *"
+                allowFullScreen
+                playsInline
+                sandbox="allow-scripts allow-same-origin allow-forms"
+              />
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full text-[10px] font-medium pointer-events-none"
+                style={{
+                  background: 'rgba(0,0,0,0.7)',
+                  backdropFilter: 'blur(8px)',
+                  color: 'rgba(255,255,255,0.5)',
+                }}
+              >
+                Ads are blocked &mdash; clicking them won&apos;t redirect
+              </div>
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-black">
               <p className="text-[var(--text-muted)]">No player available</p>
