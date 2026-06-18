@@ -222,18 +222,16 @@ export default function WatchPage() {
                 playsInline
                 sandbox="allow-scripts allow-same-origin allow-forms"
               />
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full text-[10px] font-medium pointer-events-none"
-                style={{
-                  background: 'rgba(0,0,0,0.7)',
-                  backdropFilter: 'blur(8px)',
-                  color: 'rgba(255,255,255,0.5)',
-                }}
-              >
-                Ads are blocked &mdash; clicking them won&apos;t redirect
-              </div>
             </div>
           ) : (
             <p className="text-[var(--text-muted)]">No player available for this content</p>
+          )}
+          {playerUrl && (
+            <div className="flex justify-center px-4 py-2">
+              <span className="text-[10px] text-[var(--text-muted)] font-medium">
+                Ads are blocked &mdash; clicking them won&apos;t redirect
+              </span>
+            </div>
           )}
         </div>
       </div>
@@ -260,15 +258,15 @@ export default function WatchPage() {
       </div>
 
       {activeEpisode && (
-        <div className="relative w-full bg-black shrink-0 lg:max-w-6xl lg:mx-auto lg:rounded-2xl lg:overflow-hidden lg:shadow-2xl" style={{ aspectRatio: '16/9', maxHeight: '55vh' }}>
-          {!playerLoaded && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black z-10">
-              <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
-              <span className="text-[var(--text-muted)] text-sm">Loading player...</span>
-            </div>
-          )}
-          {activePlayerUrl ? (
-            <>
+        <>
+          <div className="relative w-full bg-black shrink-0 lg:max-w-6xl lg:mx-auto lg:rounded-2xl lg:overflow-hidden lg:shadow-2xl" style={{ aspectRatio: '16/9', maxHeight: '55vh' }}>
+            {!playerLoaded && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black z-10">
+                <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+                <span className="text-[var(--text-muted)] text-sm">Loading player...</span>
+              </div>
+            )}
+            {activePlayerUrl ? (
               <iframe
                 src={activePlayerUrl}
                 title={stripArabic(activeEpisode.title?.rendered || '')}
@@ -279,22 +277,20 @@ export default function WatchPage() {
                 playsInline
                 sandbox="allow-scripts allow-same-origin allow-forms"
               />
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full text-[10px] font-medium pointer-events-none"
-                style={{
-                  background: 'rgba(0,0,0,0.7)',
-                  backdropFilter: 'blur(8px)',
-                  color: 'rgba(255,255,255,0.5)',
-                }}
-              >
-                Ads are blocked &mdash; clicking them won&apos;t redirect
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-black">
+                <p className="text-[var(--text-muted)]">No player available</p>
               </div>
-            </>
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-black">
-              <p className="text-[var(--text-muted)]">No player available</p>
+            )}
+          </div>
+          {activePlayerUrl && (
+            <div className="flex justify-center px-4 py-2 bg-[var(--bg-primary)]">
+              <span className="text-[10px] text-[var(--text-muted)] font-medium">
+                Ads are blocked &mdash; clicking them won&apos;t redirect
+              </span>
             </div>
           )}
-        </div>
+        </>
       )}
 
       <div className={`${activeEpisode ? 'flex-1 overflow-y-auto' : ''}`}>
