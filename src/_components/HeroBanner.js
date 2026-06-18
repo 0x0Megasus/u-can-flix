@@ -18,7 +18,6 @@ export default function HeroBanner({ item, onWatch, loading }) {
   useEffect(() => {
     setTmdbData(null)
     setImgError(false)
-    setImageLoaded(false)
     setDescLoading(false)
     if (!item) return
 
@@ -89,14 +88,14 @@ export default function HeroBanner({ item, onWatch, loading }) {
   const overview = tmdbData?.overview || ''
   const genres = tmdbData?.genres || extractGenres(item) || []
 
-  const wpImage = getFeaturedImage(item, 'large')
+  const wpImage = getFeaturedImage(item, 'full')
 
   const image = imgError
     ? FALLBACK_IMG
     : (tmdbData?.backdrop_path
         ? tmdbImage(tmdbData.backdrop_path, 'original')
         : tmdbData?.poster_path
-          ? tmdbImage(tmdbData.poster_path, 'w500')
+          ? tmdbImage(tmdbData.poster_path, 'original')
           : wpImage || FALLBACK_IMG)
 
   const handlePlay = (quickPlay) => {
