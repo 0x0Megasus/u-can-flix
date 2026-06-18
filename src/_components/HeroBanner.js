@@ -36,6 +36,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
           const results = await res.json()
           if (results?.length > 0 && !controller.signal.aborted) {
             setTmdbData(results[0])
+            if (results[0]?.backdrop_path) setImgError(false)
             return
           }
         }
@@ -122,6 +123,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
             />
           ) : (
             <Image
+              key={image}
               className={`object-cover transition-all duration-1000 ${imageLoaded ? 'scale-100 blur-0' : 'scale-105 blur-sm'}`}
               src={image}
               alt={title}

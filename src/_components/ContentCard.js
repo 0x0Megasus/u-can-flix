@@ -1,16 +1,64 @@
 'use client';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getFeaturedImage, detectType, extractQuality, extractGenres, getCleanTitle, parseEpisode, stripArabic } from '@/_lib/utils'
+import { tmdbImage } from '@/_lib/tmdb'
+
+const CARD_TMDB_CACHE = new Map()
+
+function useCardImage(item) {
+  const [src, setSrc] = useState(null)
+  const [loaded, setLoaded] = useState(false)
+  const fetched = useRef(false)
+
+  const wpSrc = getFeaturedImage(item, 'medium')
+  const title = getCleanTitle(item)
+  const type = detectType(item)
+  const isShowType = type === 'TV Show' || type === 'Anime'
+
+  useEffect(() => {
+    setSrc(wpSrc || null)
+    setLoaded(false)
+    fetched.current = false
+  }, [wpSrc])
+
+  const handleError = () => {
+    if (fetched.current || !title) return
+    fetched.current = true
+
+    const cacheKey = title.toLowerCase().trim()
+    if (CARD_TMDB_CACHE.has(cacheKey)) {
+      const cached = CARD_TMDB_CACHE.get(cacheKey)
+      if (cached) setSrc(cached)
+      return
+    }
+
+    const searchType = isShowType ? 'tv' : 'movie'
+    fetch(`/api/tmdb/search?q=${encodeURIComponent(title)}&type=${searchType}`)
+      .then(r => r.json())
+      .then(results => {
+        if (results?.length > 0) {
+          const img = results[0]?.poster_path
+            ? tmdbImage(results[0].poster_path, 'w342')
+            : null
+          CARD_TMDB_CACHE.set(cacheKey, img)
+          if (img) setSrc(img)
+        } else {
+          CARD_TMDB_CACHE.set(cacheKey, null)
+        }
+      })
+      .catch(() => {})
+  }
+
+  return { src, loaded, setLoaded, handleError }
+}
 
 export default function ContentCard({ item }) {
   const router = useRouter()
-  const [imgLoaded, setImgLoaded] = useState(false)
-  const [imgError, setImgError] = useState(false)
+  const { src: image, loaded: imgLoaded, setLoaded: setImgLoaded, handleError } = useCardImage(item)
 
   const title = stripArabic(getCleanTitle(item))
-  const image = imgError ? null : getFeaturedImage(item, 'medium')
   const type = detectType(item)
   const quality = extractQuality(item.title?.rendered || '')
   const genres = extractGenres(item)
@@ -43,13 +91,14 @@ export default function ContentCard({ item }) {
         {image ? (
           <>
             <Image
+              key={image}
               className={`object-cover transition-all duration-700 ${imgLoaded ? 'scale-100' : 'scale-110'}`}
               src={image}
               alt={title}
               fill
               sizes="(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 180px, 160px"
               onLoad={() => setImgLoaded(true)}
-              onError={() => setImgError(true)}
+              onError={handleError}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500" />
           </>

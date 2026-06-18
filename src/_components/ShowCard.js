@@ -1,22 +1,71 @@
 'use client';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getFeaturedImage, detectType, extractQuality, extractGenres, stripArabic } from '@/_lib/utils'
+import { tmdbImage } from '@/_lib/tmdb'
+
+const CARD_TMDB_CACHE = new Map()
+
+function useCardImage(post) {
+  const [src, setSrc] = useState(null)
+  const [loaded, setLoaded] = useState(false)
+  const fetched = useRef(false)
+
+  const wpSrc = getFeaturedImage(post, 'medium')
+  const title = stripArabic(post?.title?.rendered || '')
+  const type = detectType(post)
+
+  useEffect(() => {
+    setSrc(wpSrc || null)
+    setLoaded(false)
+    fetched.current = false
+  }, [wpSrc])
+
+  const handleError = () => {
+    if (fetched.current || !title) return
+    fetched.current = true
+
+    const cacheKey = `show-${title.toLowerCase().trim()}`
+    if (CARD_TMDB_CACHE.has(cacheKey)) {
+      const cached = CARD_TMDB_CACHE.get(cacheKey)
+      if (cached) setSrc(cached)
+      return
+    }
+
+    const searchType = type === 'Movie' ? 'movie' : 'tv'
+    fetch(`/api/tmdb/search?q=${encodeURIComponent(title)}&type=${searchType}`)
+      .then(r => r.json())
+      .then(results => {
+        if (results?.length > 0) {
+          const img = results[0]?.poster_path
+            ? tmdbImage(results[0].poster_path, 'w342')
+            : null
+          CARD_TMDB_CACHE.set(cacheKey, img)
+          if (img) setSrc(img)
+        } else {
+          CARD_TMDB_CACHE.set(cacheKey, null)
+        }
+      })
+      .catch(() => {})
+  }
+
+  return { src, loaded, setLoaded, handleError }
+}
 
 export default function ShowCard({ group }) {
   const router = useRouter()
   const [imgLoaded, setImgLoaded] = useState(false)
-  const [imgError, setImgError] = useState(false)
 
   const posts = group?.posts || (group?.id ? [group] : [])
   const fallbackPost = posts.find(p => p?.id) || posts[0]
   const post = group?.representative?.id ? group.representative : fallbackPost
 
+  const { src: image, handleError } = useCardImage(post)
+
   if (!post) return null
 
   const title = stripArabic(group?.displayName || post.title?.rendered || 'Untitled')
-  const image = imgError ? null : getFeaturedImage(post, 'medium')
   const type = detectType(post)
   const quality = extractQuality(post.title?.rendered || '')
   const genres = extractGenres(post)
@@ -60,13 +109,14 @@ export default function ShowCard({ group }) {
         {image ? (
           <>
             <Image
+              key={image}
               className={`object-cover transition-all duration-700 ${imgLoaded ? 'scale-100' : 'scale-110'}`}
               src={image}
               alt={title}
               fill
               sizes="(min-width: 1024px) 220px, (min-width: 768px) 200px, (min-width: 640px) 180px, 160px"
               onLoad={() => setImgLoaded(true)}
-              onError={() => setImgError(true)}
+              onError={handleError}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500" />
           </>
