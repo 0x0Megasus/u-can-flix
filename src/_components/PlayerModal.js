@@ -108,7 +108,7 @@ export default function PlayerModal({ item, onClose }) {
             hiding ? 'animate-hintOut' : 'animate-hintIn'
           }`}>
             <span className="text-[var(--text-tertiary)] text-sm">
-              Use <strong className="text-[var(--text-primary)]">full screen mode</strong> to hide external ads if you are seeing them.
+              If you see ads on the player, <strong className="text-[var(--text-primary)]">clicking them won't redirect you anywhere</strong> — they are blocked.
             </span>
             <button onClick={handleDismiss} aria-label="Dismiss hint"
               className="ml-3 text-[var(--text-muted)] hover:text-[var(--text-primary)] bg-transparent border-none cursor-pointer transition-colors"
