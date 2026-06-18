@@ -100,6 +100,7 @@ export default function PlayerModal({ item, onClose }) {
             playsInline
             webkitallowfullscreen="true"
             mozallowfullscreen="true"
+            sandbox="allow-scripts allow-same-origin allow-forms"
           />
         </div>
         {!dismissed && (

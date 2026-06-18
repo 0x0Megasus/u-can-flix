@@ -211,15 +211,18 @@ export default function WatchPage() {
             </div>
           )}
           {playerUrl ? (
-            <iframe
-              src={playerUrl}
-              title={title}
-              onLoad={() => setPlayerLoaded(true)}
-              className={`w-full h-full ${playerLoaded ? '' : 'invisible'}`}
-              allow="autoplay *; encrypted-media *; fullscreen *; picture-in-picture *"
-              allowFullScreen
-              playsInline
-            />
+            <div className="relative w-full h-full">
+              <iframe
+                src={playerUrl}
+                title={title}
+                onLoad={() => setPlayerLoaded(true)}
+                className={`w-full h-full ${playerLoaded ? '' : 'invisible'}`}
+                allow="autoplay *; encrypted-media *; fullscreen *; picture-in-picture *"
+                allowFullScreen
+                playsInline
+                sandbox="allow-scripts allow-same-origin allow-forms"
+              />
+            </div>
           ) : (
             <p className="text-[var(--text-muted)]">No player available for this content</p>
           )}
@@ -264,6 +267,7 @@ export default function WatchPage() {
               allow="autoplay *; encrypted-media *; fullscreen *; picture-in-picture *"
               allowFullScreen
               playsInline
+              sandbox="allow-scripts allow-same-origin allow-forms"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-black">
