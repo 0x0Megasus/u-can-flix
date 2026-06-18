@@ -15,32 +15,51 @@ function useCardImage(post) {
   const wpSrc = getFeaturedImage(post, 'medium')
   const title = stripArabic(post?.title?.rendered || '')
   const type = detectType(post)
+  const isShowType = type === 'TV Show' || type === 'Anime'
+  const cacheKey = title ? `show-${title.toLowerCase().trim()}` : ''
 
   useEffect(() => {
     setSrc(wpSrc || null)
     setLoaded(false)
     fetched.current = false
-  }, [wpSrc])
+
+    if (!wpSrc && title && !fetched.current) {
+      fetched.current = true
+      if (CARD_TMDB_CACHE.has(cacheKey)) {
+        const cached = CARD_TMDB_CACHE.get(cacheKey)
+        if (cached) setSrc(cached)
+        return
+      }
+      const searchType = isShowType ? 'tv' : 'movie'
+      fetch(`/api/tmdb/search?q=${encodeURIComponent(title)}&type=${searchType}`)
+        .then(r => r.json())
+        .then(results => {
+          if (results?.length > 0) {
+            const img = results[0]?.poster_path ? tmdbImage(results[0].poster_path, 'w342') : null
+            CARD_TMDB_CACHE.set(cacheKey, img)
+            if (img) setSrc(img)
+          } else {
+            CARD_TMDB_CACHE.set(cacheKey, null)
+          }
+        })
+        .catch(() => {})
+    }
+  }, [wpSrc, title, cacheKey, isShowType])
 
   const handleError = () => {
     if (fetched.current || !title) return
     fetched.current = true
-
-    const cacheKey = `show-${title.toLowerCase().trim()}`
     if (CARD_TMDB_CACHE.has(cacheKey)) {
       const cached = CARD_TMDB_CACHE.get(cacheKey)
       if (cached) setSrc(cached)
       return
     }
-
-    const searchType = type === 'Movie' ? 'movie' : 'tv'
+    const searchType = isShowType ? 'tv' : 'movie'
     fetch(`/api/tmdb/search?q=${encodeURIComponent(title)}&type=${searchType}`)
       .then(r => r.json())
       .then(results => {
         if (results?.length > 0) {
-          const img = results[0]?.poster_path
-            ? tmdbImage(results[0].poster_path, 'w342')
-            : null
+          const img = results[0]?.poster_path ? tmdbImage(results[0].poster_path, 'w342') : null
           CARD_TMDB_CACHE.set(cacheKey, img)
           if (img) setSrc(img)
         } else {
