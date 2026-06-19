@@ -226,13 +226,6 @@ export default function WatchPage() {
           ) : (
             <p className="text-[var(--text-muted)]">No player available for this content</p>
           )}
-          {playerUrl && (
-            <div className="flex justify-center px-4 py-2">
-              <span className="text-[10px] text-[var(--text-muted)] font-medium">
-                Ads are blocked &mdash; clicking them won&apos;t redirect
-              </span>
-            </div>
-          )}
         </div>
       </div>
     )
@@ -283,13 +276,6 @@ export default function WatchPage() {
               </div>
             )}
           </div>
-          {activePlayerUrl && (
-            <div className="flex justify-center px-4 py-2 bg-[var(--bg-primary)]">
-              <span className="text-[10px] text-[var(--text-muted)] font-medium">
-                Ads are blocked &mdash; clicking them won&apos;t redirect
-              </span>
-            </div>
-          )}
         </>
       )}
 
