@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getFeaturedImage, getCleanTitle, getSearchTitle, stripYears, detectType, extractGenres } from '@/_lib/utils'
+import { getFeaturedImage, getCleanTitle, stripYears, detectType, extractGenres } from '@/_lib/utils'
 import { tmdbImage } from '@/_lib/tmdb'
 import { fetchDescription } from '@/_lib/description'
 
@@ -21,7 +21,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
     setDescLoading(false)
     if (!item) return
 
-    const title = getSearchTitle(item)
+    const title = getCleanTitle(item)
     if (!title) return
 
     const controller = new AbortController()
