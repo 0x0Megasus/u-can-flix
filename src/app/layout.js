@@ -1,6 +1,5 @@
 import "./globals.css";
 import AppShell from "@/_components/AppShell";
-import Script from "next/script";
 
 export async function generateMetadata() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ucanflix.com';
@@ -68,31 +67,8 @@ export default function RootLayout({ children }) {
           }}
         />
       <script src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"></script>
-      <script dangerouslySetInnerHTML={{
-            __html: `
-              window.atOptions = {
-                'key' : 'f0e6a6da7462c54a63bc5e46a10c6fc9',
-                'format' : 'iframe',
-                'height' : 300,
-                'width' : 160,
-                'params' : {}
-              };
-            `
-          }} />
-          <script src="https://www.highperformanceformat.com/f0e6a6da7462c54a63bc5e46a10c6fc9/invoke.js"></script>
       </head>
       <body className="min-h-full text-[var(--text-primary)] font-['Cairo',Arial,Helvetica,sans-serif] antialiased">
-        <Script src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js" strategy="afterInteractive" />
-        <Script id="ad-options" strategy="afterInteractive">{`
-          window.atOptions = {
-            'key' : 'f0e6a6da7462c54a63bc5e46a10c6fc9',
-            'format' : 'iframe',
-            'height' : 300,
-            'width' : 160,
-            'params' : {}
-          };
-        `}</Script>
-        <Script src="https://www.highperformanceformat.com/f0e6a6da7462c54a63bc5e46a10c6fc9/invoke.js" strategy="afterInteractive" />
         <AppShell>{children}</AppShell>
       </body>
     </html>
