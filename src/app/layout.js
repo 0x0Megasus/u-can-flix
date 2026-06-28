@@ -66,7 +66,18 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
-      <script src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"></script>
+      <script dangerouslySetInnerHTML={{
+            __html: `
+              atOptions = {
+                'key' : 'f0e6a6da7462c54a63bc5e46a10c6fc9',
+                'format' : 'iframe',
+                'height' : 300,
+                'width' : 160,
+                'params' : {}
+              };
+            `
+          }} />
+          <script src="https://www.highperformanceformat.com/f0e6a6da7462c54a63bc5e46a10c6fc9/invoke.js"></script>
       </head>
       <body className="min-h-full text-[var(--text-primary)] font-['Cairo',Arial,Helvetica,sans-serif] antialiased">
         <AppShell>{children}</AppShell>
