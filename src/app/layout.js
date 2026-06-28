@@ -66,9 +66,10 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
+      <script src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"></script>
       <script dangerouslySetInnerHTML={{
             __html: `
-              atOptions = {
+              window.atOptions = {
                 'key' : 'f0e6a6da7462c54a63bc5e46a10c6fc9',
                 'format' : 'iframe',
                 'height' : 300,
