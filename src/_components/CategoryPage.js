@@ -9,7 +9,7 @@ import LoadingSkeleton from '@/_components/LoadingSkeleton'
 import ScrollArrows from '@/_components/ScrollArrows'
 import { useHorizontalScroll } from '@/_hooks/useHorizontalScroll'
 import { fetchBestContent, fetchContent, fetchPosts } from '@/_lib/api'
-import { groupByShow, pickBiggestSeason, getCategoryIds, detectType, showKey } from '@/_lib/utils'
+import { groupByShow, pickBiggestSeason, getCategoryIds, getCleanTitle, detectType, showKey, dispatchWatchStart } from '@/_lib/utils'
 
 const PAGE_SIZE = 12
 const ROW_SIZE = 12
@@ -52,6 +52,7 @@ export default function CategoryPage({ filter, label }) {
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleWatch = useCallback((item) => {
+    dispatchWatchStart(getCleanTitle(item))
     sessionStorage.setItem('watchItem', JSON.stringify(item))
     navigate.push(`/watch/${item.id}`)
   }, [navigate])

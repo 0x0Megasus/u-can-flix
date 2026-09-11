@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { getFeaturedImage, detectType, extractQuality, extractGenres, stripArabic } from '@/_lib/utils'
+import { getFeaturedImage, detectType, extractQuality, extractGenres, stripArabic, dispatchWatchStart } from '@/_lib/utils'
 import { tmdbImage } from '@/_lib/tmdb'
 
 const CARD_TMDB_CACHE = new Map()
@@ -118,6 +118,7 @@ export default function ShowCard({ group }) {
   const rating = group?.imdbRating || post.imdbRating
 
   const handleClick = () => {
+    dispatchWatchStart(title)
     const data = {
       item: post,
       group: {

@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { getFeaturedImage, detectType, extractQuality, extractGenres, getCleanTitle, parseEpisode, stripArabic } from '@/_lib/utils'
+import { getFeaturedImage, detectType, extractQuality, extractGenres, getCleanTitle, parseEpisode, stripArabic, dispatchWatchStart } from '@/_lib/utils'
 import { tmdbImage } from '@/_lib/tmdb'
 
 const CARD_TMDB_CACHE = new Map()
@@ -111,6 +111,7 @@ export default function ContentCard({ item }) {
   const { season, episode } = parseEpisode(item.title?.rendered || '')
 
   const handlePlay = () => {
+    dispatchWatchStart(title)
     sessionStorage.setItem('watchItem', JSON.stringify(item))
     router.push(`/watch/${item.id}`)
   }

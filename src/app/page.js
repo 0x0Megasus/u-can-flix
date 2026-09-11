@@ -5,7 +5,7 @@ import Link from 'next/link'
 import HeroBanner from '@/_components/HeroBanner'
 import TopRatedRow from '@/_components/TopRatedRow'
 import { fetchContent } from '@/_lib/api'
-import { getCategoryIds } from '@/_lib/utils'
+import { getCategoryIds, getCleanTitle, dispatchWatchStart } from '@/_lib/utils'
 
 export default function HomePage() {
   const navigate = useRouter()
@@ -14,6 +14,7 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleWatch = useCallback((item) => {
+    dispatchWatchStart(getCleanTitle(item))
     sessionStorage.setItem('watchItem', JSON.stringify(item))
     navigate.push(`/watch/${item.id}`)
   }, [navigate])

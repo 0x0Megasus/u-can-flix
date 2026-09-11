@@ -485,3 +485,8 @@ export function matchTitle(item, query) {
 
   return false
 }
+
+export function dispatchWatchStart(title) {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(new CustomEvent('nav:start', { detail: { title: title || '' } }))
+}

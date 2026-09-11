@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getFeaturedImage, getCleanTitle, getSearchTitle, stripYears, detectType, extractGenres } from '@/_lib/utils'
+import { getFeaturedImage, getCleanTitle, getSearchTitle, stripYears, detectType, extractGenres, dispatchWatchStart } from '@/_lib/utils'
 import { tmdbImage } from '@/_lib/tmdb'
 import { fetchDescription } from '@/_lib/description'
 
@@ -100,6 +100,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
           : wpImage || FALLBACK_IMG)
 
   const handlePlay = (quickPlay) => {
+    dispatchWatchStart(title)
     const data = isShowType
       ? { item, type, displayName: title, isShow: true, quickPlay: !!quickPlay }
       : { item, type: 'movie' }
