@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import HeroBanner from '@/_components/HeroBanner'
 import ContentCard from '@/_components/ContentCard'
@@ -95,8 +95,9 @@ export default function CategoryPage({ filter, label }) {
     navigate.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&type=${filter}`)
   }
 
-  const displayItems = isShowType 
-    ? groupByShow(items || []).map(g => {
+  const displayItems = useMemo(() => {
+    if (!isShowType) return items || []
+    return groupByShow(items || []).map(g => {
         const season = pickBiggestSeason(g)
         const sNum = season.seasonNum || 1
         if (Object.keys(g.seasons).length === 0) {
@@ -107,7 +108,7 @@ export default function CategoryPage({ filter, label }) {
         const key = showKey(item.displayName || '')
         return key && arr.findIndex(x => showKey(x.displayName || '') === key) === idx
       })
-    : items || []
+  }, [items, isShowType])
 
   const visibleItems = displayItems.slice(0, visibleCount)
   const hasMore = visibleCount < displayItems.length
@@ -137,6 +138,14 @@ export default function CategoryPage({ filter, label }) {
     setLoadingMore(false)
   }
 
+  const catHero = useMemo(() => heroItem || (Array.isArray(items) && items.find(i => {
+    const cats = getCategoryIds(i)
+    if (filter === 'anime') return cats.some(c => [5, 8].includes(c)) && !cats.some(c => [7, 9].includes(c))
+    if (filter === 'tv') return cats.some(c => [7, 9].includes(c)) && !cats.some(c => [5, 8].includes(c)) && !cats.some(c => [3, 4].includes(c))
+    if (filter === 'movies') return cats.some(c => [3, 4].includes(c)) && !cats.some(c => [7, 9].includes(c))
+    return false
+  })) || items?.[0] || null, [heroItem, items, filter])
+
   if (loading) {
     return (
       <main>
@@ -146,14 +155,6 @@ export default function CategoryPage({ filter, label }) {
       </main>
     )
   }
-
-  const catHero = heroItem || (Array.isArray(items) && items.find(i => {
-    const cats = getCategoryIds(i)
-    if (filter === 'anime') return cats.some(c => [5, 8].includes(c)) && !cats.some(c => [7, 9].includes(c))
-    if (filter === 'tv') return cats.some(c => [7, 9].includes(c)) && !cats.some(c => [5, 8].includes(c)) && !cats.some(c => [3, 4].includes(c))
-    if (filter === 'movies') return cats.some(c => [3, 4].includes(c)) && !cats.some(c => [7, 9].includes(c))
-    return false
-  })) || items?.[0] || null
 
   const handleSearchBtn = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })

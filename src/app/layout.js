@@ -47,6 +47,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://image.tmdb.org" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
         <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700,800&display=swap" rel="stylesheet" />
         <script
@@ -66,7 +67,6 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
-      // <script src="https://pl29766285.effectivecpmnetwork.com/c3/c9/b9/c3c9b9b5438f3c814c455a7da3cdf7f3.js"></script>
       </head>
       <body className="min-h-full text-[var(--text-primary)] font-['Cairo',Arial,Helvetica,sans-serif] antialiased">
         <AppShell>{children}</AppShell>

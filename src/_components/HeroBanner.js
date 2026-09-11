@@ -94,9 +94,9 @@ export default function HeroBanner({ item, onWatch, loading }) {
   const image = imgError
     ? FALLBACK_IMG
     : (tmdbData?.backdrop_path
-        ? tmdbImage(tmdbData.backdrop_path, 'original')
+        ? tmdbImage(tmdbData.backdrop_path, 'w1280')
         : tmdbData?.poster_path
-          ? tmdbImage(tmdbData.poster_path, 'original')
+          ? tmdbImage(tmdbData.poster_path, 'w780')
           : wpImage || FALLBACK_IMG)
 
   const handlePlay = (quickPlay) => {
@@ -129,6 +129,7 @@ export default function HeroBanner({ item, onWatch, loading }) {
               alt={title}
               fill
               priority
+              fetchPriority="high"
               loading="eager"
               unoptimized
               sizes="100vw"

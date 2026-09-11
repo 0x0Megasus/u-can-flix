@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import HeroBanner from '@/_components/HeroBanner'
 import TopRatedRow from '@/_components/TopRatedRow'
-import { fetchContent, fetchBestContent } from '@/_lib/api'
+import { fetchContent } from '@/_lib/api'
 import { getCategoryIds } from '@/_lib/utils'
 
 export default function HomePage() {
@@ -35,10 +35,6 @@ export default function HomePage() {
       } finally {
         if (!cancelled) setHeroLoading(false)
       }
-
-      fetchBestContent('movies', 10).catch(() => {})
-      fetchBestContent('tv', 10).catch(() => {})
-      fetchBestContent('anime', 10).catch(() => {})
     }
     load()
     return () => { cancelled = true }

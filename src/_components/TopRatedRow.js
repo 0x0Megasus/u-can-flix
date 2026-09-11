@@ -23,15 +23,24 @@ export default function TopRatedRow({ title, type, filter, items: externalItems,
 
     async function loadTopRated() {
       try {
-        const [bestData, fallbackData] = await Promise.all([
-          fetchBestContent(type || filter, limit).catch(() => []),
-          filter ? fetchContent(filter, '', 1).catch(() => []) : Promise.resolve([])
-        ]);
+        const isShowType = filter === 'tv' || filter === 'anime';
+        // Shows always need the full fallback list for grouping; movies only
+        // need it when the Top-N list comes back incomplete. Kicks off in
+        // parallel so the show path is unchanged.
+        const bestPromise = fetchBestContent(type || filter, limit).catch(() => []);
+        const fallbackPromise = (filter && isShowType)
+          ? fetchContent(filter, '', 1).catch(() => [])
+          : Promise.resolve(null);
 
+        const bestData = await bestPromise;
         let combined = [...(Array.isArray(bestData) ? bestData : [])];
 
-        const isShowType = filter === 'tv' || filter === 'anime';
-        if ((isShowType || combined.length < (limit || 10)) && Array.isArray(fallbackData)) {
+        let fallbackData = await fallbackPromise;
+        if (!isShowType && filter && combined.length < (limit || 10)) {
+          fallbackData = await fetchContent(filter, '', 1).catch(() => []);
+        }
+
+        if (Array.isArray(fallbackData)) {
           const seenIds = new Set(combined.map(i => i.id));
           const fill = fallbackData.filter(i => !seenIds.has(i.id));
           combined = [...combined, ...fill];

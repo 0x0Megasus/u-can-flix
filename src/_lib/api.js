@@ -145,7 +145,9 @@ export async function fetchShowEpisodes(showName, categoryIds) {
   const seen = new Set(allPosts.map(p => p.id));
 
   if (totalPages > 1) {
-    const remainingPages = Array.from({ length: Math.min(totalPages - 1, 7) }, (_, i) => i + 2);
+    // Cap follow-up pages to keep watch-page time-to-interactive fast on mobile.
+    // WP search returns most relevant matches first, so later pages rarely add episodes.
+    const remainingPages = Array.from({ length: Math.min(totalPages - 1, 3) }, (_, i) => i + 2);
     const results = await Promise.allSettled(remainingPages.map(async (page) => {
       const pageParams = new URLSearchParams(params);
       pageParams.set('page', String(page));

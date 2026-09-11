@@ -10,8 +10,10 @@ const CARD_TMDB_CACHE = new Map()
 function useCardImage(item) {
   const [src, setSrc] = useState(null)
   const [loaded, setLoaded] = useState(false)
+  const [visible, setVisible] = useState(false)
   const fetched = useRef(false)
   const errorRetried = useRef(false)
+  const imgRef = useRef(null)
 
   const wpSrc = getFeaturedImage(item, 'medium')
   const title = getCleanTitle(item)
@@ -21,12 +23,31 @@ function useCardImage(item) {
   const cacheKey = title?.toLowerCase().trim() || ''
 
   useEffect(() => {
+    const el = imgRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setVisible(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '200px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     setSrc(wpSrc || null)
     setLoaded(false)
     fetched.current = false
     errorRetried.current = false
 
-    if (!wpSrc && title && !fetched.current) {
+    if (!wpSrc && title && visible && !fetched.current) {
       fetched.current = true
       if (CARD_TMDB_CACHE.has(cacheKey)) {
         const cached = CARD_TMDB_CACHE.get(cacheKey)
@@ -47,7 +68,7 @@ function useCardImage(item) {
         })
         .catch(() => {})
     }
-  }, [wpSrc, title, cacheKey, isShowType])
+  }, [wpSrc, title, cacheKey, isShowType, visible])
 
   const handleError = () => {
     if (!title) return
@@ -76,12 +97,12 @@ function useCardImage(item) {
       .catch(() => {})
   }
 
-  return { src, loaded, setLoaded, handleError }
+  return { src, loaded, setLoaded, handleError, imgRef }
 }
 
 export default function ContentCard({ item }) {
   const router = useRouter()
-  const { src: image, loaded: imgLoaded, setLoaded: setImgLoaded, handleError } = useCardImage(item)
+  const { src: image, loaded: imgLoaded, setLoaded: setImgLoaded, handleError, imgRef } = useCardImage(item)
 
   const title = stripArabic(getCleanTitle(item))
   const type = detectType(item)
@@ -105,6 +126,7 @@ export default function ContentCard({ item }) {
 
   return (
     <article
+      ref={imgRef}
       role="button"
       tabIndex={0}
       aria-label={`Play ${title}`}
