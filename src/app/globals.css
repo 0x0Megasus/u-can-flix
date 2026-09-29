@@ -274,6 +274,18 @@ audio, video {
     box-shadow 0.35s var(--ease-out-expo);
 }
 
+/* Player fit-inside box: never wider or taller than the visible player area,
+   so the provider's seek bar and buttons can never be clipped off-screen.
+   The video letterboxes inside when the box is not exactly 16:9. */
+.player-fit {
+  width: 100%;
+  height: 100%;
+  max-width: 72rem;
+  max-height: 100%;
+  aspect-ratio: 16 / 9;
+  margin-inline: auto;
+}
+
 /* Episode list scrollbar: chunky and always visible so it is easy to grab. */
 .eps-scroll {
   scrollbar-width: auto;

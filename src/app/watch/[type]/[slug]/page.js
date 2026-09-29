@@ -26,7 +26,8 @@ function parseRoute(params) {
 }
 
 export async function generateMetadata({ params }) {
-  const route = parseRoute(await params);
+  const resolved = await params;
+  const route = parseRoute(resolved);
   const data = route ? await loadData(route.id, route.type) : null;
 
   if (!data) {
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    alternates: { canonical: `/watch/${item.type === 'tv' ? 'series' : 'movie'}/${params.slug ?? ''}` },
+    alternates: { canonical: `/watch/${item.type === 'tv' ? 'series' : 'movie'}/${resolved.slug ?? ''}` },
     openGraph: {
       title,
       description,

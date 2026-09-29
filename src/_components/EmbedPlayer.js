@@ -47,8 +47,6 @@ export default function EmbedPlayer({
   isAnime = false,
   title,
   wpFallbackUrl,
-  aspect = '16/9',
-  maxHeight,
   onTimeUpdate,
 }) {
   const [serverId, setServerId] = useState(null);
@@ -136,11 +134,10 @@ export default function EmbedPlayer({
 
   const isExternal = Boolean(current);
 
+  // Fills the fit-inside box from the parent exactly: no overflow, no scroll,
+  // and the provider's bottom controls are always on screen.
   return (
-    <div
-      className="relative w-full overflow-hidden bg-black"
-      style={{ aspectRatio: aspect, ...(maxHeight ? { maxHeight } : null) }}
-    >
+    <div className="relative h-full w-full overflow-hidden bg-black">
       {!loaded && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black z-10">
           <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />

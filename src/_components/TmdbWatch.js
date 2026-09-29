@@ -249,15 +249,10 @@ export default function TmdbWatch({ item, type, seasons, credits, similar }) {
             </h2>
             <div className="w-16" />
           </div>
-          <div className="flex-1 min-h-0 w-full overflow-y-auto bg-black">
-            <div className="min-h-full flex items-center justify-center p-3 sm:p-6">
-              {/* Width is capped by both the viewport width and the viewport
-                  height (via the 16:9 ratio), so the 16:9 player always fits
-                  on screen with no cropping and no dead space. */}
-              <div
-                className="w-full"
-                style={{ maxWidth: 'min(72rem, calc((100dvh - 140px) * 16 / 9))' }}
-              >
+          <div className="flex-1 min-h-0 w-full overflow-hidden bg-black flex items-center justify-center sm:p-6">
+              {/* Fit-inside box: never taller or wider than this area, so the
+                  provider's bottom controls can never be clipped off-screen. */}
+              <div className="player-fit">
                 <EmbedPlayer
                   tmdbId={item.tmdb_id}
                   imdbId={item.imdb_id}
@@ -269,7 +264,6 @@ export default function TmdbWatch({ item, type, seasons, credits, similar }) {
               </div>
             </div>
           </div>
-        </div>
       )}
 
       {!playing && (

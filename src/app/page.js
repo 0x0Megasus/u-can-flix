@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import HeroBanner from '@/_components/HeroBanner';
 import Rail from '@/_components/Rail';
 import ContinueWatching from '@/_components/ContinueWatching';
-import { getTrending, hasTmdbKey } from '@/_lib/tmdb';
+import { getTrending, getTopRated, getGenreShelf, hasTmdbKey } from '@/_lib/tmdb';
 
 export const revalidate = 1800;
 
@@ -39,10 +39,14 @@ async function getHomeData() {
 
   // Home stays light: hero plus two trending rows. Deeper browsing lives on
   // Movies, TV Shows, and Search.
-  const [trendingAll, trendingMovies, trendingTv] = await Promise.all([
+  const [trendingAll, trendingMovies, trendingTv, topMovies, topTv, action, dramaSeries] = await Promise.all([
     getTrending('all', 1).catch(() => []),
     getTrending('movie', 1).catch(() => []),
     getTrending('tv', 1).catch(() => []),
+    getTopRated('movie', 1).catch(() => []),
+    getTopRated('tv', 1).catch(() => []),
+    getGenreShelf('movie', 28).catch(() => []),
+    getGenreShelf('tv', 18).catch(() => []),
   ]);
 
   // Trending mixes movies and shows, so each entry needs a concrete type.
@@ -53,6 +57,10 @@ async function getHomeData() {
     hero: typed(trendingAll, 'movie'),
     trendingMovies: typed(trendingMovies, 'movie'),
     trendingTv: typed(trendingTv, 'tv'),
+    topMovies: typed(topMovies, 'movie'),
+    topTv: typed(topTv, 'tv'),
+    action: typed(action, 'movie'),
+    dramaSeries: typed(dramaSeries, 'tv'),
   };
 }
 
@@ -73,7 +81,7 @@ export default async function HomePage() {
   }
 
   const titles = {};
-  for (const item of [...data.trendingMovies, ...data.trendingTv]) {
+  for (const item of [...data.trendingMovies, ...data.trendingTv, ...data.topMovies, ...data.topTv, ...data.action, ...data.dramaSeries]) {
     if (item.tmdb_id && !titles[item.tmdb_id]) {
       titles[item.tmdb_id] = { title: item.title, type: item.type, year: item.year, backdrop_path: item.backdrop_path || null };
     }
@@ -88,13 +96,30 @@ export default async function HomePage() {
           <ContinueWatching titles={titles} />
         </div>
 
+        {/* Six shelves capped at 6 titles each: more categories, same light page. */}
         <div className="page-shell">
           <Suspense fallback={<RailFallback title="Trending Movies This Week" />}>
-            <Rail title="Trending Movies This Week" items={data.trendingMovies} href="/movies" salt={1} />
+            <Rail title="Trending Movies This Week" items={data.trendingMovies} href="/movies" limit={6} salt={1} />
           </Suspense>
 
           <Suspense fallback={<RailFallback title="Trending Series" />}>
-            <Rail title="Trending Series" items={data.trendingTv} href="/tv-shows" salt={2} />
+            <Rail title="Trending Series" items={data.trendingTv} href="/tv-shows" limit={6} salt={2} />
+          </Suspense>
+
+          <Suspense fallback={<RailFallback title="Top Rated Movies" />}>
+            <Rail title="Top Rated Movies" items={data.topMovies} href="/movies" limit={6} salt={3} />
+          </Suspense>
+
+          <Suspense fallback={<RailFallback title="Top Rated Series" />}>
+            <Rail title="Top Rated Series" items={data.topTv} href="/tv-shows" limit={6} salt={4} />
+          </Suspense>
+
+          <Suspense fallback={<RailFallback title="Action Movies" />}>
+            <Rail title="Action Movies" items={data.action} href="/movies" limit={6} salt={5} />
+          </Suspense>
+
+          <Suspense fallback={<RailFallback title="Drama Series" />}>
+            <Rail title="Drama Series" items={data.dramaSeries} href="/tv-shows" limit={6} salt={6} />
           </Suspense>
         </div>
       </div>
