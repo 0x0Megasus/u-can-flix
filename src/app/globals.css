@@ -1,68 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #08080a;
-  --bg-secondary: #0d0d12;
-  --bg-tertiary: #13131a;
-  --bg-elevated: #1a1a24;
-  --bg-card: #12121a;
-  --bg-hover: #1e1e2a;
+  /* Surfaces: warmer, deeper blacks with a subtle blue cast so posters and
+     artwork read as the brightest thing on screen. */
+  --bg-primary: #05060a;
+  --bg-secondary: #0a0c12;
+  --bg-tertiary: #11141d;
+  --bg-elevated: #171b26;
+  --bg-card: #0e1118;
+  --bg-hover: #1e2331;
+
   --accent: #e50914;
-  --accent-hover: #ff1a27;
-  --accent-subtle: rgba(229, 9, 20, 0.12);
-  --accent-glow: rgba(229, 9, 20, 0.4);
-  --text-primary: #f5f5f7;
-  --text-secondary: #a1a1aa;
-  --text-tertiary: #71717a;
-  --text-muted: #52525b;
+  --accent-hover: #ff2b38;
+  --accent-subtle: rgba(229, 9, 20, 0.14);
+  --accent-glow: rgba(229, 9, 20, 0.45);
+
+  --text-primary: #f7f8fa;
+  --text-secondary: #a8b0bf;
+  --text-tertiary: #7c8598;
+  --text-muted: #565e70;
+
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: rgba(255, 255, 255, 0.1);
-  --border-hover: rgba(255, 255, 255, 0.15);
-  --glass-bg: rgba(13, 13, 18, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
-  --shadow-elevated: 0 8px 40px rgba(0, 0, 0, 0.5);
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --border-hover: rgba(255, 255, 255, 0.18);
+
+  --glass-bg: rgba(10, 12, 18, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 12px 48px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 8px 32px rgba(229, 9, 20, 0.28);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
   --radius-full: 9999px;
+
+  /* Card geometry, shared so every rail lines up on the same baseline. */
+  --card-w: 168px;
+  --card-gap: 14px;
+
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --header-h: 60px;
+}
+
+@media (min-width: 640px) {
+  :root { --card-w: 188px; --card-gap: 16px; }
+}
+
+@media (min-width: 768px) {
+  :root { --card-w: 208px; --card-gap: 18px; }
 }
 
 @theme inline {
   --color-bg: var(--bg-primary);
   --color-accent: var(--accent);
   --color-card: var(--bg-card);
-  --font-sans: 'Cairo', Arial, Helvetica, sans-serif;
-  --font-display: 'Clash Display', sans-serif;
+  --font-sans: var(--font-cairo), system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-display: var(--font-cairo), system-ui, sans-serif;
 }
 
 html {
   scroll-behavior: smooth;
+  /* The browser canvas defaults to white. Any subpixel gap, overscroll, or
+     not-yet-painted frame would flash white without this. */
+  background: var(--bg-primary);
+  /* Keeps anchored content clear of the fixed header. */
+  scroll-padding-top: calc(var(--header-h) + 16px);
 }
 
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Cairo', Arial, Helvetica, sans-serif;
+  font-family: var(--font-cairo), var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Avoids a visible flash of unstyled text on first paint. */
+  text-rendering: optimizeLegibility;
+}
+
+/* Consistent focus treatment for keyboard users across every control. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+img {
+  /* Poster art is the main content; a stray background never helps. */
+  background-color: var(--bg-card);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.1) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
 *::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {
@@ -70,17 +117,22 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 10px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.24);
 }
 
 ::selection {
   background: var(--accent);
   color: white;
+}
+
+/* Native media controls in the episode list inherit the OS palette. */
+audio, video {
+  color-scheme: dark;
 }
 
 @keyframes shimmer {
@@ -185,9 +237,9 @@ body {
 }
 
 .glass-card {
-  background: rgba(18, 18, 26, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(18, 22, 32, 0.68);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
   border: 1px solid var(--border-subtle);
 }
 
@@ -196,6 +248,203 @@ body {
   backdrop-filter: blur(32px) saturate(1.1);
   -webkit-backdrop-filter: blur(32px) saturate(1.1);
   border: 1px solid var(--border-default);
+}
+
+/* ---------------------------------------------------------------------------
+   Poster card
+   One hover treatment for every rail, so a movie card and a TMDB card feel
+   like the same product rather than two components that happen to look alike.
+   --------------------------------------------------------------------------- */
+
+.poster {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 0.35s var(--ease-out-expo),
+    box-shadow 0.35s var(--ease-out-expo);
+}
+
+/* Episode list scrollbar: chunky and always visible so it is easy to grab. */
+.eps-scroll {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.07);
+  scrollbar-gutter: stable;
+}
+
+.eps-scroll::-webkit-scrollbar {
+  width: 14px;
+}
+
+.eps-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+}
+
+.eps-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.07);
+}
+
+.eps-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Touch devices have no meaningful hover state; skip lift/zoom there. */
+@media (hover: none) {
+  .poster-hover:hover .poster,
+  .poster-hover:focus-visible .poster,
+  .poster-hover:hover .poster img,
+  .poster-hover:focus-visible .poster img {
+    transform: none;
+  }
+}
+
+.poster img {
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out-expo), opacity 0.4s ease;
+}
+
+.poster-hover:hover .poster,
+.poster-hover:focus-visible .poster {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--border-hover);
+}
+
+.poster-hover:hover .poster img,
+.poster-hover:focus-visible .poster img {
+  transform: scale(1.04);
+}
+
+/* Horizontal rails. Scroll-snap makes touch scrolling land on whole cards. */
+.rail {
+  display: flex;
+  gap: var(--card-gap);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 1px;
+  padding-bottom: 6px;
+}
+
+/* Locks every card to the same width and title baseline so a rail reads as a
+   grid even though it scrolls. */
+.rail > * {
+  flex: 0 0 var(--card-w);
+  width: var(--card-w);
+  scroll-snap-align: start;
+}
+
+.rail-title {
+  min-height: 1.75rem;
+}
+
+/* Hero content swap. Opacity only — never transform — so the rotation can not
+   paint a transient seam across the frame. */
+.hero-swap {
+  animation: heroSwap 0.5s ease;
+}
+
+@keyframes heroSwap {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Fades the right edge so cut-off cards read as "more to the right". */
+.rail-fade {
+  position: absolute;
+  top: 0;
+  bottom: 8px;
+  right: 0;
+  width: 56px;
+  pointer-events: none;
+  background: linear-gradient(to left, var(--bg-primary) 12%, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.rail-shell:hover .rail-fade,
+.rail-shell:focus-within .rail-fade {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Content width
+   One centered shell is shared by the header, hero, rails, grids, and footer.
+   No negative-margin escape: the old escape widened centered content past the
+   viewport and produced the off-center/right-gap layout bug.
+   --------------------------------------------------------------------------- */
+
+.page-shell {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 4vw, 3rem);
+  padding-right: clamp(1rem, 4vw, 3rem);
+}
+
+/* Buttons --------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  transition: transform 0.25s var(--ease-out-back), background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 4px 24px rgba(255, 255, 255, 0.12);
+}
+
+.btn-primary:hover {
+  transform: scale(1.04);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+  transform: scale(1.04);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary:hover,
+  .btn-accent:hover,
+  .btn-ghost:hover,
+  .poster-hover:hover .poster,
+  .poster-hover:focus-visible .poster {
+    transform: none;
+  }
 }
 
 @keyframes border-shimmer {
@@ -216,12 +465,6 @@ body {
 @keyframes nav-glow-pulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50% { opacity: 0.8; transform: scale(1.05); }
-}
-
-*:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 4px;
 }
 
 input:focus-visible {

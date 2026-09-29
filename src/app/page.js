@@ -1,117 +1,103 @@
-'use client';
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import HeroBanner from '@/_components/HeroBanner'
-import TopRatedRow from '@/_components/TopRatedRow'
-import { fetchContent } from '@/_lib/api'
-import { getCategoryIds, getCleanTitle, dispatchWatchStart } from '@/_lib/utils'
+import { Suspense } from 'react';
+import HeroBanner from '@/_components/HeroBanner';
+import Rail from '@/_components/Rail';
+import ContinueWatching from '@/_components/ContinueWatching';
+import { getTrending, hasTmdbKey } from '@/_lib/tmdb';
 
-export default function HomePage() {
-  const navigate = useRouter()
-  const [heroItem, setHeroItem] = useState(null)
-  const [heroLoading, setHeroLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+export const revalidate = 1800;
 
-  const handleWatch = useCallback((item) => {
-    dispatchWatchStart(getCleanTitle(item))
-    sessionStorage.setItem('watchItem', JSON.stringify(item))
-    navigate.push(`/watch/${item.id}`)
-  }, [navigate])
+export const metadata = {
+  title: 'Watch Free Movies & TV Shows Online HD',
+  description:
+    'Stream movies and TV shows free in HD. Thousands of titles, full seasons, no sign up and no ads.',
+  alternates: { canonical: '/' },
+};
 
-  useEffect(() => {
-    let cancelled = false
-    const load = async () => {
-      setHeroLoading(true)
-      try {
-        const [tvContent] = await Promise.all([
-          fetchContent('tv', '', 1),
-        ])
-        if (cancelled) return
-        const hero = Array.isArray(tvContent)
-          ? tvContent.find(i => !getCategoryIds(i).some(c => [5, 8].includes(c))) || tvContent[0]
-          : null
-        setHeroItem(hero)
-      } catch {
-      } finally {
-        if (!cancelled) setHeroLoading(false)
-      }
+function RailFallback({ title }) {
+  return (
+    <section className="mb-10">
+      <h2 className="text-base sm:text-lg font-bold text-[var(--text-primary)] tracking-tight mb-4">{title}</h2>
+      <div className="flex gap-3 overflow-hidden" aria-hidden="true">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} style={{ width: 'var(--card-w)' }} className="flex-shrink-0">
+            <div className="aspect-[2/3] rounded-[var(--radius-md)] skeleton mb-2" />
+            <div className="h-3 rounded skeleton w-full mb-1.5" />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Only titles with artwork are worth a slot on a rail. */
+function usable(list) {
+  return (Array.isArray(list) ? list : []).filter(item => item?.tmdb_id && item?.poster_path);
+}
+
+async function getHomeData() {
+  if (!hasTmdbKey()) return null;
+
+  // Home stays light: hero plus two trending rows. Deeper browsing lives on
+  // Movies, TV Shows, and Search.
+  const [trendingAll, trendingMovies, trendingTv] = await Promise.all([
+    getTrending('all', 1).catch(() => []),
+    getTrending('movie', 1).catch(() => []),
+    getTrending('tv', 1).catch(() => []),
+  ]);
+
+  // Trending mixes movies and shows, so each entry needs a concrete type.
+  const typed = (list, fallback) =>
+    usable(list).map(item => ({ ...item, type: item.type === 'TV Show' ? 'tv' : fallback }));
+
+  return {
+    hero: typed(trendingAll, 'movie'),
+    trendingMovies: typed(trendingMovies, 'movie'),
+    trendingTv: typed(trendingTv, 'tv'),
+  };
+}
+
+export default async function HomePage() {
+  const data = await getHomeData();
+
+  if (!data) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-6 text-center">
+        <div>
+          <h1 className="text-2xl font-black text-[var(--text-primary)] mb-2">Catalogue unavailable</h1>
+          <p className="text-[var(--text-tertiary)] text-sm">
+            The title service could not be reached. Please try again shortly.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const titles = {};
+  for (const item of [...data.trendingMovies, ...data.trendingTv]) {
+    if (item.tmdb_id && !titles[item.tmdb_id]) {
+      titles[item.tmdb_id] = { title: item.title, type: item.type, year: item.year, backdrop_path: item.backdrop_path || null };
     }
-    load()
-    return () => { cancelled = true }
-  }, [])
-
-  const handleSearch = (e) => {
-    e.preventDefault()
-    if (!searchQuery.trim()) return
-    navigate.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
   }
 
   return (
     <main>
-      <div className="sr-only">
-        <h1>Watch Free Movies, TV Shows & Anime Online</h1>
-        <section>
-          <h2>Why UCanFlix?</h2>
-          <p>
-            UCanFlix is a free streaming site no sign up required, offering thousands of
-            movies, TV shows, and anime in HD quality. You can watch free movies online
-            without signing up or creating an account. Unlike other platforms, we have
-            zero ads, no limits, and no hidden fees — just unlimited access to premium
-            entertainment across every genre imaginable.
-          </p>
-        </section>
-        <section>
-          <h2>Top Categories</h2>
-          <p>
-            Browse our library of <Link href="/movies">free movies online</Link> across
-            action, drama, comedy, and crime. Catch up on popular{' '}
-            <Link href="/tv-shows">free TV shows online</Link> including the latest
-            series. Stream full seasons of the best <Link href="/anime">anime free HD</Link>{' '}
-            with English subtitles and dubbing. Use our{' '}
-            <Link href="/search">advanced search</Link> to discover new releases.
-          </p>
-        </section>
-        <section>
-          <h2>No Registration Required</h2>
-          <p>
-            Stream movies free no registration needed — just click and watch instantly.
-            As the best free anime streaming site 2026, we deliver instant playback in HD
-            quality. Enjoy free HD movie streaming no account necessary on any device.
-            UCanFlix is the best free streaming site like Netflix, but without the cost.
-          </p>
-        </section>
-      </div>
-      <HeroBanner item={heroItem} onWatch={handleWatch} loading={heroLoading} />
-      <section className="pt-12">
-        <TopRatedRow title="Top Movies" filter="movies" limit={10} />
-        <TopRatedRow title="TV Shows" filter="tv" limit={10} />
-        <TopRatedRow title="Anime" filter="anime" limit={10} />
-      </section>
+      <HeroBanner items={data.hero} />
 
-      <div className="pb-16 mt-8">
-        <form onSubmit={handleSearch} className="flex items-stretch gap-2 max-w-xl mx-auto">
-          <input
-            className="flex-1 px-4 py-3 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] text-[var(--text-primary)] text-base border border-[var(--border-default)] outline-none focus:ring-2 focus:ring-[var(--accent)] focus:border-transparent placeholder-[var(--text-muted)] transition-all duration-300"
-            type="text"
-            placeholder="Search movies, TV shows & anime..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-          />
-          <button type="submit" aria-label="Search"
-            className="px-5 py-3 rounded-[var(--radius-md)] bg-[var(--accent)] text-white border-none cursor-pointer hover:bg-[var(--accent-hover)] transition-all duration-300 flex items-center justify-center"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </button>
-          <button type="button" onClick={() => navigate.push('/search')}
-            className="px-5 py-3 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-default)] cursor-pointer text-sm font-medium transition-all duration-300"
-          >
-            Advanced
-          </button>
-        </form>
+      <div className="pt-9 sm:pt-12">
+        <div className="page-shell">
+          <ContinueWatching titles={titles} />
+        </div>
+
+        <div className="page-shell">
+          <Suspense fallback={<RailFallback title="Trending Movies This Week" />}>
+            <Rail title="Trending Movies This Week" items={data.trendingMovies} href="/movies" salt={1} />
+          </Suspense>
+
+          <Suspense fallback={<RailFallback title="Trending Series" />}>
+            <Rail title="Trending Series" items={data.trendingTv} href="/tv-shows" salt={2} />
+          </Suspense>
+        </div>
       </div>
     </main>
-  )
+  );
 }

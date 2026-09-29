@@ -1,49 +1,68 @@
-'use client';
-import { useState } from 'react'
-import Link from 'next/link'
-import ContactModal from './ContactModal'
+import Link from 'next/link';
+
+const GROUPS = [
+  {
+    title: 'Browse',
+    links: [
+      { href: '/', label: 'Home' },
+      { href: '/movies', label: 'Movies' },
+      { href: '/tv-shows', label: 'TV Shows' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { href: '/dmca', label: 'DMCA' },
+    ],
+  },
+];
 
 export default function Footer() {
-  const [contactOpen, setContactOpen] = useState(false)
-
   return (
-    <footer className="border-t border-[var(--border-subtle)] py-10 px-4 sm:px-10 lg:px-[200px] mt-16 pb-[90px]">
-      <div className="max-w-[1440px] mx-auto">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
-          <div className="text-center md:text-left">
-            <div className="text-[var(--accent)] text-xl font-black tracking-[0.08em] mb-1">U CAN FLIX</div>
-            <p className="text-[var(--text-muted)] text-xs max-w-xs">
-              Unlimited entertainment, zero cost. Stream free movies, TV shows & anime in HD.
+    <footer className="border-t border-[var(--border-subtle)] mt-16">
+      <div className="page-shell py-10">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-8">
+          <div className="max-w-xs">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-6 h-6 rounded-md bg-[var(--accent)] flex items-center justify-center" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="white">
+                  <polygon points="5,3 19,12 5,21" />
+                </svg>
+              </span>
+              <span className="font-black text-sm tracking-tight text-[var(--text-primary)]">U Can Flix</span>
+            </div>
+            <p className="text-[var(--text-muted)] text-xs leading-relaxed">
+              Stream movies and TV shows free in HD. No sign up, no ads, no limits.
             </p>
           </div>
-          <div className="flex items-center gap-6">
-            <Link href="/dmca"
-              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-sm transition-colors duration-300"
-            >
-              DMCA
-            </Link>
-            <button onClick={() => setContactOpen(true)}
-              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-sm bg-transparent border-none cursor-pointer transition-colors duration-300"
-            >
-              Contact Us
-            </button>
-            <Link href="/search"
-              className="text-[var(--text-muted)] hover:text-[var(--text-primary)] text-sm transition-colors duration-300"
-            >
-              Search
-            </Link>
+
+          <div className="flex gap-10 sm:gap-16">
+            {GROUPS.map(group => (
+              <div key={group.title}>
+                <h2 className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3">
+                  {group.title}
+                </h2>
+                <ul className="space-y-2">
+                  {group.links.map(link => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-sm transition-colors duration-200 no-underline"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
-        <div className="border-t border-[var(--border-subtle)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[var(--text-muted)] text-xs max-w-lg text-center sm:text-left">
-            This site does not store any files on our server. We only link to media hosted on third-party services.
-          </p>
-          <div className="text-[var(--text-muted)] text-xs">
-            &copy; {new Date().getFullYear()} U Can Flix. All rights reserved.
-          </div>
-        </div>
+
+        <p className="text-[var(--text-muted)] text-[11px] mt-8 pt-6 border-t border-[var(--border-subtle)]">
+          Title data provided by The Movie Database. Playback is served by third-party providers.
+        </p>
       </div>
-      {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
     </footer>
-  )
+  );
 }

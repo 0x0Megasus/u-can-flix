@@ -5,6 +5,8 @@ export default function robots() {
     rules: {
       userAgent: '*',
       allow: '/',
+      // Filtered views and the search page have no standalone value.
+      disallow: ['/search', '/api/'],
     },
     sitemap: new URL('/sitemap.xml', siteUrl).toString(),
   }
