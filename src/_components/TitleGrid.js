@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import WatchLink from './WatchLink';
 import { tmdbImage } from '@/_lib/tmdb';
 import { buildWatchPath } from '@/_lib/slug';
 
@@ -19,7 +19,7 @@ export default function TitleGrid({ items = [], type }) {
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-3">
       {items.map(item => (
-        <Link
+        <WatchLink
           key={item.tmdb_id}
           href={buildWatchPath({ type, title: item.title, year: item.year, id: item.tmdb_id })}
           className="group block no-underline poster-hover"
@@ -56,7 +56,7 @@ export default function TitleGrid({ items = [], type }) {
             {item.title}
           </p>
           {item.year && <p className="text-[11px] text-[var(--text-muted)]">{item.year}</p>}
-        </Link>
+        </WatchLink>
       ))}
     </div>
   );

@@ -71,7 +71,7 @@ export default async function SearchPage({ searchParams }) {
     <main className="min-h-screen pt-[60px]">
       <div className="page-shell py-8">
         <header className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-black text-[var(--text-primary)] tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl text-[var(--text-primary)]">
             {query ? `Results for “${query}”` : 'Search'}
           </h1>
         </header>

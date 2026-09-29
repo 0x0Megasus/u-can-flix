@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { notifyNavStart } from './WatchLink';
 import { tmdbImage } from '@/_lib/tmdb';
 import { buildWatchPath, TYPE_LABEL, TYPE_ACCENT } from '@/_lib/slug';
 
@@ -62,6 +63,7 @@ export default function HeroBanner({ items = [] }) {
 
   const handleWatch = useCallback(() => {
     if (!current) return;
+    notifyNavStart();
     router.push(buildWatchPath({ type: current.type, title: current.title, year: current.year, id: current.tmdb_id }));
   }, [current, router]);
 
@@ -124,7 +126,7 @@ export default function HeroBanner({ items = [] }) {
                 <Stars rating={current.vote_average} count={current.vote_count} />
               </div>
 
-              <h1 className="text-[28px] sm:text-4xl md:text-[42px] lg:text-5xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-2xl mb-4">
+              <h1 className="font-display text-[34px] sm:text-5xl md:text-[54px] lg:text-6xl text-white leading-[1.02] drop-shadow-2xl mb-4">
                 {current.title}
               </h1>
 

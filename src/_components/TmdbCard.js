@@ -1,7 +1,7 @@
 'use client';
 import { memo, useCallback, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import WatchLink from './WatchLink';
 import { tmdbImage } from '@/_lib/tmdb';
 import { buildWatchPath } from '@/_lib/slug';
 
@@ -37,7 +37,7 @@ function TmdbCardInner({ item, showProgress = false }) {
 
   return (
     <div className="flex-shrink-0 poster-hover" style={{ width: 'var(--card-w)' }}>
-      <Link
+      <WatchLink
         href={href}
         className="block group focus:outline-none no-underline"
         aria-label={`Watch ${item.title}${item.year ? ` (${item.year})` : ''}`}
@@ -88,7 +88,7 @@ function TmdbCardInner({ item, showProgress = false }) {
             </span>
           )}
         </div>
-      </Link>
+      </WatchLink>
 
       <p className="mt-1 text-xs font-semibold text-[var(--text-primary)] truncate group-hover:text-[var(--accent)] transition-colors">
         {item.title}

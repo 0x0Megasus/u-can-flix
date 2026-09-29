@@ -17,7 +17,7 @@ function Logo() {
           <polygon points="5,3 19,12 5,21" />
         </svg>
       </span>
-      <span className="font-black text-[15px] tracking-tight text-[var(--text-primary)] hidden sm:block">
+      <span className="font-display text-[17px] text-[var(--text-primary)] hidden sm:block">
         U Can Flix
       </span>
     </Link>

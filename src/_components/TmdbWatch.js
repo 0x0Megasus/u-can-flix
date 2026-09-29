@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
+import WatchLink from './WatchLink';
 import EmbedPlayer from './EmbedPlayer';
 import { tmdbImage } from '@/_lib/tmdb';
 import { rememberTitleMeta } from '@/_lib/progress';
@@ -112,7 +112,7 @@ export default function TmdbWatch({ item, type, seasons, credits, similar }) {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[var(--text-primary)] tracking-tight mb-3">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-[var(--text-primary)] mb-3">
                 {item.title}
               </h1>
 
@@ -293,7 +293,7 @@ export default function TmdbWatch({ item, type, seasons, credits, similar }) {
             {similar.map(s => {
               const href = buildWatchPath({ type: s.type, title: s.title, year: s.year, id: s.tmdb_id });
               return (
-                <Link key={s.tmdb_id} href={href} className="group block no-underline">
+                <WatchLink key={s.tmdb_id} href={href} className="group block no-underline">
                   <div className="relative aspect-[2/3] rounded-[var(--radius-md)] overflow-hidden bg-[var(--bg-card)] mb-2">
                     {s.poster_path && (
                       <Image
@@ -309,7 +309,7 @@ export default function TmdbWatch({ item, type, seasons, credits, similar }) {
                     {s.title}
                   </p>
                   {s.year && <p className="text-[11px] text-[var(--text-muted)]">{s.year}</p>}
-                </Link>
+                </WatchLink>
               );
             })}
           </div>

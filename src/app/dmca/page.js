@@ -11,9 +11,11 @@ export const metadata = {
   },
 }
 
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'ucanflix-support@gmail.com';
+
 export default function DMCAPage() {
   return (
-    <section className="pb-16 max-w-4xl mx-auto">
+    <section className="pt-[60px] pb-16 max-w-4xl mx-auto">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-black text-[var(--text-primary)] mb-8 tracking-tight">DMCA Takedown Request Requirements</h1>
 
@@ -31,6 +33,10 @@ export default function DMCAPage() {
             a process for addressing claims of copyright infringement. If you own a copyright
             or have authority to act on behalf of a copyright owner and want to report a claim
             that a third party is infringing that material please submit a DMCA report via email
+            to{' '}
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-[var(--accent)] hover:underline font-medium">
+              {CONTACT_EMAIL}
+            </a>{' '}
             and we will take appropriate action.
           </p>
         </div>
@@ -56,8 +62,11 @@ export default function DMCAPage() {
 
         <div className="mt-10 p-5 rounded-[var(--radius-md)] bg-[var(--bg-tertiary)] border border-[var(--border-default)]">
           <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
-            Please send your DMCA takedown notice to us. We will promptly investigate and
-            take appropriate action in accordance with the DMCA.
+            Please send your DMCA takedown notice to{' '}
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-[var(--accent)] hover:underline font-medium">
+              {CONTACT_EMAIL}
+            </a>
+            . We will promptly investigate and take appropriate action in accordance with the DMCA.
           </p>
           <p className="text-[var(--text-secondary)] text-sm mt-4 leading-relaxed">
             Thank you for your cooperation.

@@ -61,8 +61,15 @@
   --color-bg: var(--bg-primary);
   --color-accent: var(--accent);
   --color-card: var(--bg-card);
-  --font-sans: var(--font-cairo), system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-  --font-display: var(--font-cairo), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-display: var(--font-anton), 'Arial Narrow', system-ui, sans-serif;
+}
+
+/* Display face for hero and page titles. Anton ships a single 400 weight by
+   design, so no weight utilities — sizing and case carry the hierarchy. */
+.font-display {
+  font-family: var(--font-anton), 'Arial Narrow', system-ui, sans-serif;
+  letter-spacing: 0.01em;
 }
 
 html {
@@ -77,7 +84,7 @@ html {
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-cairo), var(--font-sans);
+  font-family: var(--font-inter), var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;

@@ -1,17 +1,24 @@
-import { Cairo } from 'next/font/google';
+import { Anton, Inter } from 'next/font/google';
 import './globals.css';
 import AppShell from '@/_components/AppShell';
 
 /**
- * Self-hosted through next/font. The previous two <link> tags to Google Fonts
- * and Fontshare were render-blocking requests to two separate origins, which
- * delayed first paint on every page.
+ * Two self-hosted faces, two jobs. Anton is a condensed poster-style display
+ * for hero and page titles; Inter is the neutral UI workhorse for everything
+ * else. Both load through next/font, so there is no render-blocking font CSS.
  */
-const cairo = Cairo({
+const anton = Anton({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: '400',
   display: 'swap',
-  variable: '--font-cairo',
+  variable: '--font-anton',
+  fallback: ['Arial Narrow', 'sans-serif'],
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
   fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Arial', 'sans-serif'],
 });
 
@@ -53,7 +60,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${cairo.variable} h-full`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${anton.variable} ${inter.variable} h-full`}>
       <head>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

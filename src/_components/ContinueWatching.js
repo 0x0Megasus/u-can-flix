@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
+import WatchLink from './WatchLink';
 import Image from 'next/image';
 import { listenForProgress, getProgressEntries, getTitleMeta } from '@/_lib/progress';
 import { tmdbImage } from '@/_lib/tmdb';
@@ -50,7 +50,7 @@ export default function ContinueWatching({ titles = {} }) {
             : 0;
 
           return (
-            <Link
+            <WatchLink
               key={entry.id}
               href={href}
               className="group block no-underline poster-hover"
@@ -96,7 +96,7 @@ export default function ContinueWatching({ titles = {} }) {
               {remaining > 0 && (
                 <p className="text-[11px] text-[var(--text-muted)]">{remaining}m left</p>
               )}
-            </Link>
+            </WatchLink>
           );
         })}
       </div>

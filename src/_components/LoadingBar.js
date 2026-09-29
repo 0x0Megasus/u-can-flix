@@ -11,6 +11,7 @@ export default function LoadingBar() {
   const [visible, setVisible] = useState(false)
   const timerRef = useRef(null)
   const rafRef = useRef(null)
+  const safetyRef = useRef(null)
 
   const animate = useCallback((from, to, duration) => {
     const start = performance.now()
@@ -24,6 +25,19 @@ export default function LoadingBar() {
       }
     })
   }, [])
+
+  // Defined before `show`: `show` schedules `hide` as its safety fallback,
+  // so `hide` must already be initialized when `show` is created.
+  const hide = useCallback(() => {
+    cancelAnimationFrame(rafRef.current)
+    clearTimeout(timerRef.current)
+    clearTimeout(safetyRef.current)
+    animate(0, 100, 200)
+    timerRef.current = setTimeout(() => {
+      setVisible(false)
+      setWidth(0)
+    }, 300)
+  }, [animate])
 
   const show = useCallback(() => {
     setVisible(true)
@@ -39,17 +53,12 @@ export default function LoadingBar() {
       cancelAnimationFrame(rafRef.current)
       animate(30, 90, 3000)
     }, 500)
-  }, [animate])
 
-  const hide = useCallback(() => {
-    cancelAnimationFrame(rafRef.current)
-    clearTimeout(timerRef.current)
-    animate(0, 100, 200)
-    timerRef.current = setTimeout(() => {
-      setVisible(false)
-      setWidth(0)
-    }, 300)
-  }, [animate])
+    // Fallback: if the navigation never lands (cancelled, or failed without
+    // a pathname change) don't leave the bar stuck on screen.
+    clearTimeout(safetyRef.current)
+    safetyRef.current = setTimeout(hide, SAFETY_TIMEOUT)
+  }, [animate, hide])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -60,6 +69,7 @@ export default function LoadingBar() {
       window.removeEventListener('nav:end', hide)
       cancelAnimationFrame(rafRef.current)
       clearTimeout(timerRef.current)
+      clearTimeout(safetyRef.current)
     }
   }, [show, hide])
 

@@ -29,7 +29,7 @@ export default function Footer() {
                   <polygon points="5,3 19,12 5,21" />
                 </svg>
               </span>
-              <span className="font-black text-sm tracking-tight text-[var(--text-primary)]">U Can Flix</span>
+              <span className="font-display text-[15px] text-[var(--text-primary)]">U Can Flix</span>
             </div>
             <p className="text-[var(--text-muted)] text-xs leading-relaxed">
               Stream movies and TV shows free in HD. No sign up, no ads, no limits.
